@@ -76,10 +76,21 @@ WSGI_APPLICATION = 'ChalDal.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+#}
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.oracle',
+        'NAME': 'ORCL', #select * from global_name;
+        'USER': 'c##chaldal',
+        'PASSWORD': 'chaldal',
+        'HOST': 'localhost',
+        'PORT': '1521'
     }
 }
 

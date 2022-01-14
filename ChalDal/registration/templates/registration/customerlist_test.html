@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>customer list</title>
+  </head>
+  <body>
+    <table width="80%" border="1">
+      <tr style="background-color: lightgray">
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Phone Number</th>
+      </tr>
+
+      {% for cust in custlist %}
+
+      <tr>
+        <td>{{ cust.fname }}</td>
+        <td>{{ cust.lname }}</td>
+        <td>{{ cust.phn }}</td>
+      </tr>
+
+      {% endfor %}
+    </table>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+SQL> CREATE TABLESPACE ChaldalTableSpace
+  2  DATAFILE 'ChaldalTableSpace.dat'
+  3  SIZE 200M AUTOEXTEND ON;
+
+Tablespace created.
+
+SQL> CREATE TEMPORARY TABLESPACE ChaldalTableSpaceTemporary
+  2  TEMPFILE 'ChaldalTableSpaceTemporary.dat'
+  3  SIZE 100M AUTOEXTEND ON;
+
+Tablespace created.
+
+SQL> CREATE USER c##chaldal
+  2  IDENTIFIED BY "chaldal"
+  3  DEFAULT TABLESPACE ChaldalTableSpace
+  4  TEMPORARY TABLESPACE ChaldalTableSpaceTemporary;
+
+User created.
+
+SQL> GRANT CREATE SESSION TO c##chaldal;
+
+Grant succeeded.
+
+SQL> GRANT CREATE TABLE TO c##chaldal;
+
+Grant succeeded.
+
+SQL> GRANT UNLIMITED TABLESPACE TO c##chaldal;
+
+Grant succeeded.
+
+SQL> GRANT CREATE SEQUENCE TO c##chaldal;
+
+Grant succeeded.
+
+SQL> GRANT CREATE PROCEDURE TO c##chaldal;
+
+Grant succeeded.
+
+SQL> GRANT CREATE TRIGGER TO c##chaldal;
+
+Grant succeeded.
+
+SQL> GRANT CREATE VIEW TO c##chaldal;
+
+Grant succeeded.
+
+SQL> GRANT CREATE TYPE TO c##chaldal;
+
+Grant succeeded.

@@ -1,3 +1,0 @@
-From CMD go to project folder. Then type=>
-
-chaldalEnv\Scripts\activate.bat
