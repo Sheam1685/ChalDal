@@ -21,50 +21,41 @@
         </div>
         <div class="card shadow-2-strong card-registration" style="border-radius: 0">
           <div class="card-body p-4 p-md-5">
-            <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Register as : Customer</h3>
+            <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Register as : Seller</h3>
             <form method="POST">
               {% csrf_token %}
               <div class="row">
-                <div class="col-md-6 mb-4">
+                <div class="col-md-12 mb-4">
                   <div class="form-outline">
-                    <input type="text" id="firstName" name="fname" class="form-control form-control-lg" placeholder="First Name" />
-                    <label class="form-label visually-hidden" for="firstName">First Name</label>
-                  </div>
-                </div>
-                <div class="col-md-6 mb-4">
-                  <div class="form-outline">
-                    <input type="text" id="lastName" name="lname" class="form-control form-control-lg" placeholder="Last Name" />
-                    <label class="form-label visually-hidden" for="lastName">Last Name</label>
+                    <input type="text" id="name" name="name" class="form-control form-control-lg" placeholder="Enter Name" />
+                    <label class="form-label visually-hidden" for="name">Name</label>
                   </div>
                 </div>
               </div>
 
               <div class="row">
-                <div class="col-md-6 mb-4 d-flex align-items-center">
-                  <div class="form-outline datepicker w-100">
-                    <input type="text" class="form-control form-control-lg" id="birthdayDate" name="dob" placeholder="Date of Birth" onfocus="(this.type='date')" />
-                    <label for="birthdayDate" class="form-label visually-hidden">Birthday</label>
-                  </div>
-                </div>
                 <div class="col-md-6 mb-4 pb-2">
                   <div class="form-outline">
                     <input type="tel" id="phoneNumber" name="phn" class="form-control form-control-lg" placeholder="Phone Number" />
                     <label class="form-label visually-hidden" for="phoneNumber">Phone Number</label>
                   </div>
                 </div>
-              </div>
-
-              <div class="form-floating mb-3">
-                <input type="text" class="form-control form-control-lg" name="address" id="address" placeholder="Address" />
-                <label for="address">Address</label>
-              </div>
-              <div class="row">
-                <div class="col-md-12 mb-4 pb-2">
+                <div class="col-md-6 mb-4 pb-2">
                   <div class="form-outline">
                     <input type="email" id="emailAddress" name="email" class="form-control form-control-lg" placeholder="Email" />
                     <label class="form-label visually-hidden" for="emailAddress">Email</label>
                   </div>
                 </div>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control form-control-lg" name="address" id="address" />
+                <label for="address">Address</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="url" class="form-control form-control-lg" name="website" id="website" />
+                <label for="website">Website</label>
               </div>
 
               <div class="row">
