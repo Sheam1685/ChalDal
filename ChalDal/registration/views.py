@@ -1,10 +1,6 @@
-import email
-import re
-from sqlite3 import Cursor
-from unittest import result
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db import connection
-import datetime
+from django.http import HttpResponse
 
 # Create your views here.
 def returnSignUp(request):
@@ -102,3 +98,27 @@ def returnCustomerList(request):
         row = {'fname':fname, 'lname':lname, 'phn':phn}
         custlist.append(row)
     return render(request, 'registration/customerlist_test.html', {'custlist':custlist})
+
+
+def returnLogin(request):
+    if request.method == 'POST':
+        print("hello world")
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        cursor = connection.cursor()
+        sql = "select PASSWORD from CUSTOMER where EMAIL_ID=%s"
+        cursor.execute(sql,[email])
+        result = cursor.fetchone()
+        cursor.close()
+
+        print(email, password, result)
+
+        if password==result[0]:
+            return HttpResponse("Hello user")
+            #request.session['cus_email'] = email
+            #return redirect('home')
+
+        else:
+            return render(request, 'registration/cus_login.html',context={'status':"Incorrect email or password"} )
+
+    return render(request, 'registration/cus_login.html' )
