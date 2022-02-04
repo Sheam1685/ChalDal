@@ -118,6 +118,16 @@
               </button>
             </div>
           </form>
+          {% if isLoggedIn %}
+          <div class="d-grid d-md-flex justify-content-md-end">
+            <a class="btn btn-outline-dark me-md-2" role="button" href="{% url 'registration:cus_home' %}">
+              My Profile
+            </a>
+            <a class="btn btn-outline-danger" role="button" href="{% url 'registration:logout' %}">Log Out</a>
+          </div>
+
+          {% else %}
+
           <div class="d-grid d-md-flex justify-content-md-end">
             <a class="btn btn-outline-dark me-md-2" role="button" href="{% url 'registration:cus_login' %}">
               Log In
@@ -125,6 +135,7 @@
             
             <a class="btn btn-outline-dark" role="button" href="{% url 'registration:signup' %}">Sign Up</a>
           </div>
+          {% endif %}
         </div>
       </div>
     </nav>

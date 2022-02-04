@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from audioop import reverse
+from django.shortcuts import render, redirect, reverse
 from django.db import connection
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 # Create your views here.
 def returnSignUp(request):
@@ -100,9 +101,11 @@ def returnCustomerList(request):
     return render(request, 'registration/customerlist_test.html', {'custlist':custlist})
 
 
+
 def returnLogin(request):
+    isLoggedIn=False
     if request.method == 'POST':
-        print("hello world")
+        #print("hello world")
         email = request.POST.get('email')
         password = request.POST.get('password')
         cursor = connection.cursor()
@@ -111,14 +114,48 @@ def returnLogin(request):
         result = cursor.fetchone()
         cursor.close()
 
-        print(email, password, result)
+        if result==None:
+            return render(request, 'registration/cus_login.html',context={'status':"Incorrect email or password"} )
 
-        if password==result[0]:
-            return HttpResponse("Hello user")
-            #request.session['cus_email'] = email
-            #return redirect('home')
+        elif password==result[0]:
+            #request.session['email'] = email
+            isLoggedIn= True
+            request.session['cus_email'] = email
+            #return HttpResponseRedirect(reverse('cus_home'))
+            #return render(request, 'registration/cus_home.html', context={'isLoggedIn':isLoggedIn} )
+            return redirect('home')
 
         else:
             return render(request, 'registration/cus_login.html',context={'status':"Incorrect email or password"} )
 
     return render(request, 'registration/cus_login.html' )
+
+def returnLogout(request):
+    isLoggedIn=False
+    if request.session.has_key('cus_email'):
+        request.session.pop('cus_email')
+        return redirect('home')
+
+def returnCustomerHome(request):
+    cus_email= request.session['cus_email']
+    isLoggedIn = True
+
+    cursor = connection.cursor()
+    sql = "SELECT FIRST_NAME, LAST_NAME, ADDRESS, PHONE_NUMBER, TO_CHAR(DOB,'dd MONTH, yyyy'), EMAIL_ID FROM CUSTOMER WHERE EMAIL_ID= :email_id"
+    cursor.execute(sql,{'email_id':cus_email})
+    result = cursor.fetchall()
+    cursor.close()
+
+    firstname = result[0][0]
+    lastname = result[0][1]
+    address = result[0][2]
+    phone_no = result[0][3]
+    dob = result[0][4]
+    email_id = result[0][5]
+
+    basic_info = {
+        'isLoggedIn':isLoggedIn,
+        'firstname':firstname, 'lastname':lastname, 'address':address, 'phone_no':phone_no, 'dob':dob, 'email_id':email_id
+    }
+    
+    return render(request, 'registration/cus_home.html', basic_info )
