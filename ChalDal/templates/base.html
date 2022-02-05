@@ -120,9 +120,15 @@
           </form>
           {% if isLoggedIn %}
           <div class="d-grid d-md-flex justify-content-md-end">
+            {% if acType == "customer" %}
             <a class="btn btn-outline-dark me-md-2" role="button" href="{% url 'registration:cus_home' %}">
               My Profile
             </a>
+            {% elif acType == 'seller' %}
+            <a class="btn btn-outline-dark me-md-2" role="button" href="{% url 'registration:seller_home' %}">
+              My Profile
+            </a>
+            {% endif %}
             <a class="btn btn-outline-danger" role="button" href="{% url 'registration:logout' %}">Log Out</a>
           </div>
 

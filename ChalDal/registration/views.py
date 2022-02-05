@@ -4,6 +4,24 @@ from django.db import connection
 from django.http import HttpResponse, HttpResponseRedirect
 
 # Create your views here.
+
+def findAcType(email):
+    cursor = connection.cursor()
+    sql = 'SELECT COUNT(CUSTOMER_ID) FROM CUSTOMER WHERE EMAIL_ID=:email_id'
+    cursor.execute(sql,{'email_id':email})
+    result_cus = cursor.fetchall()
+
+    sql = 'SELECT COUNT(SELLER_ID) FROM SELLER WHERE EMAIL_ID=:email_id'
+    cursor.execute(sql,{'email_id':email})
+    result_seller = cursor.fetchall()
+    cursor.close()
+
+    if result_cus>0:
+        return "customer"
+    elif result_seller>0:
+        return "seller"
+
+
 def returnSignUp(request):
 
     if request.method == 'POST':
@@ -130,11 +148,43 @@ def returnLogin(request):
 
     return render(request, 'registration/cus_login.html' )
 
+def returnSellerLogin(request):
+    isLoggedIn=False
+    if request.method == 'POST':
+        #print("hello world")
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        cursor = connection.cursor()
+        sql = "select PASSWORD from SELLER where EMAIL_ID=%s"
+        cursor.execute(sql,[email])
+        result = cursor.fetchone()
+        cursor.close()
+
+        if result==None:
+            return render(request, 'registration/seller_login.html',context={'status':"Incorrect email or password"} )
+
+        elif password==result[0]:
+            #request.session['email'] = email
+            isLoggedIn= True
+            request.session['seller_email'] = email
+            #return HttpResponseRedirect(reverse('cus_home'))
+            #return render(request, 'registration/cus_home.html', context={'isLoggedIn':isLoggedIn} )
+            return redirect('home')
+
+        else:
+            return render(request, 'registration/seller_login.html',context={'status':"Incorrect email or password"} )
+
+    return render(request, 'registration/seller_login.html' )
+
 def returnLogout(request):
     isLoggedIn=False
     if request.session.has_key('cus_email'):
         request.session.pop('cus_email')
         return redirect('home')
+    if request.session.has_key('seller_email'):
+        request.session.pop('seller_email')
+        return redirect('home')
+    
 
 def returnCustomerHome(request):
     cus_email= request.session['cus_email']
@@ -159,3 +209,26 @@ def returnCustomerHome(request):
     }
     
     return render(request, 'registration/cus_home.html', basic_info )
+
+def returnSellerHome(request):
+    seller_email= request.session['seller_email']
+    isLoggedIn = True
+
+    cursor = connection.cursor()
+    sql = "SELECT NAME, ADDRESS, PHONE_NUMBER,  EMAIL_ID, WEBSITE FROM SELLER WHERE EMAIL_ID= :email_id"
+    cursor.execute(sql,{'email_id':seller_email})
+    result = cursor.fetchall()
+    cursor.close()
+
+    name = result[0][0]
+    address = result[0][1]
+    phone_no = result[0][2]
+    email_id = result[0][3]
+    website = result[0][4]
+
+    basic_info = {
+        'isLoggedIn':isLoggedIn,
+        'name':name, 'address':address, 'phone_no':phone_no, 'email_id':email_id, 'website':website
+    }
+    
+    return render(request, 'registration/seller_home.html', basic_info )
