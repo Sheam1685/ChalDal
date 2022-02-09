@@ -232,3 +232,30 @@ def returnSellerHome(request):
     }
     
     return render(request, 'registration/seller_home.html', basic_info )
+
+def returnSellerProducts(request):
+    seller_email= request.session['seller_email']
+    isLoggedIn = True
+
+    cursor = connection.cursor()
+    sql = """SELECT P.NAME, C.CATEGORY_NAME, 
+        (SELECT COUNT(*) FROM PRODUCT_UNIT U WHERE U.PRODUCT_ID=P.PRODUCT_ID AND U.SELLER_ID=P.SELLER_ID) AS IN_STOCK 
+        FROM PRODUCT P JOIN CATEGORY C ON(P.CATEGORY_ID=C.CATEGORY_ID) 
+        WHERE P.SELLER_ID=(SELECT S.SELLER_ID FROM SELLER S WHERE S.EMAIL_ID=:email_id)"""
+    cursor.execute(sql,{'email_id':seller_email})
+    result = cursor.fetchall()
+    cursor.close()
+    print(result)
+    products_view = []
+    for row in result:
+        x={
+            'prod_name':row[0],
+            'cat_name':row[1],
+            'in_stock':row[2]
+        }
+        products_view.append(x)
+    view_product = {
+        'isLoggedIn':isLoggedIn,
+        'products_view':products_view
+    }
+    return render(request, 'registration/seller_products.html', view_product)
