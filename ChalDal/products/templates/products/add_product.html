@@ -1,0 +1,53 @@
+{% extends 'base.html'%} {% load static %} {% block titlename %}
+
+<title>Add Product</title>
+
+{% endblock %} {% block content %}
+<p></p>
+<br />
+<h2 style="text-align: center">New Product</h2>
+<div class="container col-md-6">
+  <div class="row">
+    <div class="container d-flex justify-content-center">
+      <div class="col-lg-8 align-justify-center pr-4 pl-0 contact-form">
+        <form method="POST" style="font-weight: bold">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="prod_name" class="form-label">Product Name</label>
+            <input type="text" name="prod_name" class="form-control" id="prod_name" placeholder="Product Name" />
+          </div>
+          <div style="margin-bottom: 1em">
+            <select name="cat_name" class="form-select" aria-label="Category">
+              {% for cat in cat_list %}
+              <option value="{{cat}}">{{cat}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input type="text" name="price" class="form-control" id="price" placeholder="Price" />
+          </div>
+          <div class="mb-3">
+            <label for="quantity" class="form-label">Quantity In Stock</label>
+            <input type="number" name="quantity" class="form-control" id="quantity" placeholder="Quantity" />
+          </div>
+
+          <div class="mb-3">
+            <label for="exp_del_time" class="form-label">Expected Time To Deliver(In Hours)</label>
+            <input type="text" name="exp_del_time" class="form-control" id="exp_del_time" placeholder="In Hours" />
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Product Description</label>
+            <textarea name="description" class="form-control" id="description" rows="3"></textarea>
+          </div>
+          <div class="d-grid col-md-6 mx-auto">
+            <button class="btn btn-success" type="submit">Add Product</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
