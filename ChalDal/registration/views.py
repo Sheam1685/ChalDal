@@ -21,6 +21,25 @@ def findAcType(email):
     elif result_seller>0:
         return "seller"
 
+def categoryList():
+    cursor = connection.cursor()
+    sql = "SELECT CATEGORY_ID, CATEGORY_NAME FROM CATEGORY"
+    
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    cursor.close()
+
+    catList = []
+
+    for r in result:
+        cat_id = r[0]
+        cat_name = r[1]
+
+        row = {'cat_id':cat_id, 'cat_name':cat_name}
+        catList.append(row)
+
+    return catList
+
 
 def returnSignUp(request):
 
@@ -169,7 +188,7 @@ def returnSellerLogin(request):
             request.session['seller_email'] = email
             #return HttpResponseRedirect(reverse('cus_home'))
             #return render(request, 'registration/cus_home.html', context={'isLoggedIn':isLoggedIn} )
-            return redirect('home')
+            return redirect('registration:seller_home')
 
         else:
             return render(request, 'registration/seller_login.html',context={'status':"Incorrect email or password"} )
@@ -203,8 +222,10 @@ def returnCustomerHome(request):
     dob = result[0][4]
     email_id = result[0][5]
 
+    catList = categoryList()
+
     basic_info = {
-        'isLoggedIn':isLoggedIn,
+        'isLoggedIn':isLoggedIn, 'catList':catList,
         'firstname':firstname, 'lastname':lastname, 'address':address, 'phone_no':phone_no, 'dob':dob, 'email_id':email_id
     }
     
@@ -213,6 +234,7 @@ def returnCustomerHome(request):
 def returnSellerHome(request):
     seller_email= request.session['seller_email']
     isLoggedIn = True
+    catList = categoryList()
 
     cursor = connection.cursor()
     sql = "SELECT NAME, ADDRESS, PHONE_NUMBER,  EMAIL_ID, WEBSITE FROM SELLER WHERE EMAIL_ID= :email_id"
@@ -227,7 +249,7 @@ def returnSellerHome(request):
     website = result[0][4]
 
     basic_info = {
-        'isLoggedIn':isLoggedIn,
+        'isLoggedIn':isLoggedIn, 'catList':catList,
         'name':name, 'address':address, 'phone_no':phone_no, 'email_id':email_id, 'website':website
     }
     
@@ -236,6 +258,7 @@ def returnSellerHome(request):
 def returnSellerProducts(request):
     seller_email= request.session['seller_email']
     isLoggedIn = True
+    catList = categoryList()
 
     cursor = connection.cursor()
     sql = """SELECT P.NAME, C.CATEGORY_NAME, 
@@ -255,7 +278,7 @@ def returnSellerProducts(request):
         }
         products_view.append(x)
     view_product = {
-        'isLoggedIn':isLoggedIn,
+        'isLoggedIn':isLoggedIn, 'catList':catList,
         'products_view':products_view
     }
     return render(request, 'registration/seller_products.html', view_product)
@@ -263,6 +286,7 @@ def returnSellerProducts(request):
 def returnCusorder(request):
     cus_email= request.session['cus_email']
     isLoggedIn = True
+    catList = categoryList()
 
     cursor = connection.cursor()
     sql = """SELECT CUSTOMER_ORDER.ORDER_DATE AS DATE_OF_ORDER, PURCHASE_ORDER.DELIVERED_DATE AS DELIVERED_DATE,
@@ -316,7 +340,7 @@ def returnCusorder(request):
         orders_view.append(x)
     cursor.close()
     order_info = {
-        'isLoggedIn':isLoggedIn,
+        'isLoggedIn':isLoggedIn, 'catList':catList,
         'orders_view':orders_view,
         'buttoninfo':buttoninfo
     }
@@ -326,6 +350,8 @@ def returnCusorder(request):
 def returnCusReview(request):
     cus_email= request.session['cus_email']
     isLoggedIn = True
+    catList = categoryList()
+
     cursor = connection.cursor()
     sql = """SELECT REVIEW.REVIEW_DATE, PRODUCT.NAME, SELLER.NAME, REVIEW.DESCRIPTION, REVIEW.RATING
     FROM REVIEW LEFT OUTER JOIN PRODUCT
@@ -350,7 +376,7 @@ def returnCusReview(request):
         }
         reviews_view.append(x)
     reviews_info = {
-        'isLoggedIn':isLoggedIn,
+        'isLoggedIn':isLoggedIn, 'catList':catList,
         'reviews_view':reviews_view
     }
     return render(request, 'registration/cus_review.html', reviews_info)
@@ -359,6 +385,8 @@ def returnCusReview(request):
 def returnSellerOffers(request):
     seller_email= request.session['seller_email']
     isLoggedIn = True
+    catList = categoryList()
+
     cursor = connection.cursor()
     sql = """SELECT PRODUCT.NAME, OFFER.START_DATE, OFFER.END_DATE, OFFER.PERCENTAGE_DISCOUNT, OFFER.MINIMUM_QUANTITY_PURCHASED 
     FROM OFFER LEFT OUTER JOIN SELLER
@@ -387,7 +415,7 @@ def returnSellerOffers(request):
         }
         offers_view.append(x)
     reviews_info = {
-        'isLoggedIn':isLoggedIn,
+        'isLoggedIn':isLoggedIn, 'catList':catList,
         'offers_view':offers_view
     }
     return render(request, 'registration/seller_offers.html', reviews_info)

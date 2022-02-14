@@ -1,10 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{cat_name}}</title>
-  </head>
-  <body></body>
-</html>
+{% extends 'base.html'%} {% load static %} {% block titlename %}
+
+<title>{{cat_name}}</title>
+
+{% endblock %} {% block content %}
+
+<div class="container">
+  <p></p>
+  <br />
+  <h2 class="text-center font-monospace">{{cat_name}}</h2>
+  <div class="gallery">
+    {% for prod in prod_list %}
+
+    <div class="content">
+      <img class="product_img" src="{% static '/images/eggs.png' %}" />
+      <h3 class="product_h3">{{prod.prod_name}}</h3>
+      <p class="product_p">{{prod.prod_des}}</p>
+      <h6 class="product_h6">&#2547; {{prod.prod_price}}</h6>
+      <ul class="product_ul">
+        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+      </ul>
+      <button class="buy-2 product_button">Buy Now</button>
+    </div>
+
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

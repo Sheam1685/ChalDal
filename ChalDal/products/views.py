@@ -4,8 +4,28 @@ from django.db import connection
 
 # Create your views here.
 
+def categoryList():
+    cursor = connection.cursor()
+    sql = "SELECT CATEGORY_ID, CATEGORY_NAME FROM CATEGORY"
+    
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    cursor.close()
+
+    catList = []
+
+    for r in result:
+        cat_id = r[0]
+        cat_name = r[1]
+
+        row = {'cat_id':cat_id, 'cat_name':cat_name}
+        catList.append(row)
+
+    return catList
+
 def returnAddProduct(request):
     isLoggedIn = True
+    catList = categoryList()
     seller_email= request.session['seller_email']
 
     cursor = connection.cursor()
@@ -68,17 +88,49 @@ def returnAddProduct(request):
         return redirect('registration:seller_products')
 
     context = {
-        'cat_list':cat_list, 'isLoggedIn':isLoggedIn
+        'cat_list':cat_list, 'isLoggedIn':isLoggedIn, 'catList':catList
     }
     return render(request, 'products/add_product.html', context)
 
 def returnProductCat(request, cat_pk):
+
+    isLoggedIn=False
+    acType=""
+    if request.session.has_key('cus_email'):
+        isLoggedIn=True
+        acType="customer"
+    if request.session.has_key('seller_email'):
+        isLoggedIn=True
+        acType="seller"
+    
     cursor = connection.cursor()
     sql = "SELECT CATEGORY_NAME FROM CATEGORY WHERE CATEGORY_ID = :cat_id"
+    catList = categoryList()
+    
+    cursor.execute(sql,{'cat_id': cat_pk})
+    result = cursor.fetchall()
+    cursor.close()
+    cat_name = result[0][0]
+
+    cursor = connection.cursor()
+    sql = "SELECT NAME, DESCRIPTION, PRICE FROM PRODUCT WHERE CATEGORY_ID= :cat_id"
     
     cursor.execute(sql,{'cat_id': cat_pk})
     result = cursor.fetchall()
     cursor.close()
 
-    context={'cat_name':result[0][0]}
+    prod_list = []
+
+    for r in result:
+        prod_name = r[0]
+        prod_des = r[1]
+        prod_price = r[2]
+        row = {'prod_name':prod_name, 'prod_des':prod_des, 'prod_price': prod_price}
+        prod_list.append(row)
+
+    context = {
+        'isLoggedIn':isLoggedIn, 'acType':acType,
+        'cat_name':cat_name, 'prod_list':prod_list, 'catList':catList
+    }
+    
     return render(request, 'products/product_cat.html', context)
