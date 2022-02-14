@@ -11,5 +11,7 @@ urlpatterns = [
     path('seller_home/', views.returnSellerHome, name='seller_home'),
     path('seller_products/', views.returnSellerProducts, name='seller_products'),
     path('custlist/', views.returnCustomerList, name="custlist"),
-    
+    path('cus_order/', views.returnCusorder, name = 'cus_order'),
+    path('cus_review/', views.returnCusReview, name = 'cus_review'),
+    path('seller_offers/', views.returnSellerOffers, name = 'seller_offers'),
 ]

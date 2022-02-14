@@ -259,3 +259,135 @@ def returnSellerProducts(request):
         'products_view':products_view
     }
     return render(request, 'registration/seller_products.html', view_product)
+
+def returnCusorder(request):
+    cus_email= request.session['cus_email']
+    isLoggedIn = True
+
+    cursor = connection.cursor()
+    sql = """SELECT CUSTOMER_ORDER.ORDER_DATE AS DATE_OF_ORDER, PURCHASE_ORDER.DELIVERED_DATE AS DELIVERED_DATE,
+    PURCHASE_ORDER.DELIVERY_STATUS AS DELIVERY_STATUS, 
+    (SELECT (FIRST_NAME ||' '|| LAST_NAME) FROM EMPLOYEE WHERE EMPLOYEE_ID = PURCHASE_ORDER.DELIVERY_EMPLOYEE_ID) AS DELIVERY_EMPLOYEE_NAME,
+    (SELECT PHONE_NUMBER FROM EMPLOYEE WHERE EMPLOYEE_ID = PURCHASE_ORDER.DELIVERY_EMPLOYEE_ID) AS PHONE_NUMBER, 
+    RETURN_ORDER.APPROVAL_STATUS, CUSTOMER_ORDER.ORDER_ID
+    FROM CUSTOMER_ORDER LEFT OUTER JOIN PURCHASE_ORDER
+    ON(CUSTOMER_ORDER.ORDER_ID = PURCHASE_ORDER.ORDER_ID)
+    LEFT OUTER JOIN RETURN_ORDER
+    ON(CUSTOMER_ORDER.ORDER_ID = RETURN_ORDER.ORDER_ID)
+    WHERE CUSTOMER_ID = (SELECT CUSTOMER_ID FROM CUSTOMER WHERE EMAIL_ID =:email_id);"""
+    cursor.execute(sql,{'email_id':cus_email})
+    result = cursor.fetchall()
+    print(result)
+    orders_view = []
+    buttoninfo = ""
+    for row in result:
+        id = row[6]
+        sql = """SELECT PRODUCT.PRODUCT_ID, PRODUCT.NAME, COUNT(ORDERED_ITEMS.ITEM_NUMBER) ITEM_COUNT
+        FROM ORDERED_ITEMS LEFT OUTER JOIN PRODUCT
+        ON(ORDERED_ITEMS.PRODUCT_ID = PRODUCT.PRODUCT_ID)
+        WHERE ORDER_ID =:id
+        GROUP BY PRODUCT.PRODUCT_ID, PRODUCT.NAME;"""
+        cursor.execute(sql,{'id':id})
+        result1 = cursor.fetchall()
+        items = ""
+        for row1 in result1:
+            items = items + "," + row1[1] + "(" + str(row1[2]) + " pcs)"
+        items = items[1:]
+        print(items)
+        
+        if row[1] is None:
+            buttoninfo = 'Cancel Order'
+        else:
+            if row[5] is None:
+                buttoninfo = 'Return Order'
+            elif row[5] == 'Waiting for approval':
+                buttoninfo = 'Cancel Return'
+            elif row[5] == 'Denied':
+                buttoninfo = 'None'
+        x={
+            'date_of_order':row[0],
+            'delivered_date':row[1],
+            'delivery_status':row[2],
+            'delivery_guy':row[3],
+            'phone':row[4],
+            'return_status':row[5],
+            'items':items
+        }
+        orders_view.append(x)
+    cursor.close()
+    order_info = {
+        'isLoggedIn':isLoggedIn,
+        'orders_view':orders_view,
+        'buttoninfo':buttoninfo
+    }
+    return render(request, 'registration/cus_order.html', order_info)
+
+
+def returnCusReview(request):
+    cus_email= request.session['cus_email']
+    isLoggedIn = True
+    cursor = connection.cursor()
+    sql = """SELECT REVIEW.REVIEW_DATE, PRODUCT.NAME, SELLER.NAME, REVIEW.DESCRIPTION, REVIEW.RATING
+    FROM REVIEW LEFT OUTER JOIN PRODUCT
+    ON REVIEW.PRODUCT_ID = PRODUCT.PRODUCT_ID
+    LEFT OUTER JOIN SELLER
+    ON REVIEW.SELLER_ID = SELLER.SELLER_ID
+    LEFT OUTER JOIN CUSTOMER
+    ON REVIEW.CUSTOMER_ID = CUSTOMER.CUSTOMER_ID
+    WHERE CUSTOMER.EMAIL_ID =:email_id;"""
+    cursor.execute(sql,{'email_id':cus_email})
+    result = cursor.fetchall()
+    cursor.close()
+    print(result)
+    reviews_view = []
+    for row in result:
+        x={
+            'date_of_review':row[0],
+            'product_name':row[1],
+            'seller_name':row[2],
+            'description':row[3],
+            'rating': row[4]
+        }
+        reviews_view.append(x)
+    reviews_info = {
+        'isLoggedIn':isLoggedIn,
+        'reviews_view':reviews_view
+    }
+    return render(request, 'registration/cus_review.html', reviews_info)
+
+
+def returnSellerOffers(request):
+    seller_email= request.session['seller_email']
+    isLoggedIn = True
+    cursor = connection.cursor()
+    sql = """SELECT PRODUCT.NAME, OFFER.START_DATE, OFFER.END_DATE, OFFER.PERCENTAGE_DISCOUNT, OFFER.MINIMUM_QUANTITY_PURCHASED 
+    FROM OFFER LEFT OUTER JOIN SELLER
+    ON(OFFER.SELLER_ID = SELLER.SELLER_ID)
+    LEFT OUTER JOIN PRODUCT
+    ON(OFFER.PRODUCT_ID = PRODUCT.PRODUCT_ID)
+    WHERE SELLER.EMAIL_ID =:email_id;"""
+    cursor.execute(sql,{'email_id':seller_email})
+    result = cursor.fetchall()
+    cursor.close()
+    for row in result:
+        print(row[0])
+        print(row[1])
+        print(row[2])
+        print(row[3])
+        print(row[4])
+    print(result)
+    offers_view = []
+    for row in result:
+        x={
+            'name_of_product':row[0],
+            'start_date':row[1],
+            'end_date':row[2],
+            'discount':row[3],
+            'quantity':row[4]
+        }
+        offers_view.append(x)
+    reviews_info = {
+        'isLoggedIn':isLoggedIn,
+        'offers_view':offers_view
+    }
+    return render(request, 'registration/seller_offers.html', reviews_info)

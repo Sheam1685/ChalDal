@@ -76,20 +76,12 @@
                 Categories
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li>
-                  <a class="dropdown-item" href="#">Fruits and Vegetables</a>
-                </li>
-                <li><a class="dropdown-item" href="#">Meat and Fish</a></li>
-                <li><a class="dropdown-item" href="#">Cooking</a></li>
-                <li><a class="dropdown-item" href="#">Beverages</a></li>
-                <li><a class="dropdown-item" href="#">Home and Cleaning</a></li>
-                <li><a class="dropdown-item" href="#">Pest Control</a></li>
-                <li><a class="dropdown-item" href="#">Office Products</a></li>
-                <li><a class="dropdown-item" href="#">Beauty Products</a></li>
-                <li><a class="dropdown-item" href="#">Health Products</a></li>
-                <li><a class="dropdown-item" href="#">Pet Care</a></li>
-                <li><a class="dropdown-item" href="#">Home Appliances</a></li>
-                <li><a class="dropdown-item" href="#">Baby Care</a></li>
+                {% for cat in catList %}
+                  <li>
+                    <a class="dropdown-item" href="{% url 'products:category' cat.cat_id %}">{{cat.cat_name}}</a>
+                  </li>
+
+                {% endfor %}
               </ul>
             </li>
             <li class="nav-item">

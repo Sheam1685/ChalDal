@@ -1,0 +1,67 @@
+{% extends 'base.html'%} {% load static %} {% block titlename %}
+
+<title>Customer Order</title>
+
+{% endblock %} {% block content %}
+<p></p>
+<br />
+<div>
+  <div class="container">
+    <div class="main-body">
+      <div class="row gutters-sm">
+        <div class="col-md-2 mb-3">
+          <div class="sidebar d-grid gap-2 col-8">
+            <a class="btn btn-info" href="{% url 'registration:cus_home' %}">Basic Info</a>
+
+            <a class="btn btn-info" href="{% url 'registration:cus_order' %}">Order</a>
+
+            <a class="btn btn-info" href="{% url 'registration:cus_review' %}">Reviews</a>
+          </div>
+        </div>
+        <div class="col-md-10 mb-3">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" style="text-align: center">Order Date</th>
+                <th scope="col" style="text-align: center">Items</th>
+                <th scope="col" style="text-align: center">Delivered Date</th>
+                <th scope="col" style="text-align: center">Status</th>
+                <th scope="col" style="text-align: center">Delivery Guy</th>
+                <th scope="col" style="text-align: center">Phone</th>
+                <th scope="col" style="text-align: center">Action/Return Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in orders_view %}
+              <tr>
+                <td style="text-align: center">{{order.date_of_order}}</td>
+                <td style="text-align: center">{{order.items}}</td>
+                <td style="text-align: center">{{order.delivered_date}}</td>
+                <td style="text-align: center">{{order.delivery_status}}</td>
+                <td style="text-align: center">{{order.delivery_guy}}</td>
+                <td style="text-align: center">{{order.phone}}</td>
+                {% if buttoninfo == 'Cancel Order' %}
+                <td style="text-align: center">
+                  <a class="btn btn-outline-dark me-md-2" role="button" href="#">Cancel Order</a>
+                </td>
+                {% elif buttoninfo == 'Return Order' %}
+                <td style="text-align: center">
+                  <a class="btn btn-outline-dark me-md-2" role="button" href="#"> Return Order </a>
+                </td>
+                {% elif buttoninfo == 'Cancel Return' %}
+                <td style="text-align: center">
+                  <a class="btn btn-outline-dark me-md-2" role="button" href="#"> Cancel Return </a>
+                </td>
+                {% elif buttoninfo == 'None' %}
+                <td style="text-align: center">No Action Available</td>
+                {% endif %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

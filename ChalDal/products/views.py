@@ -71,3 +71,14 @@ def returnAddProduct(request):
         'cat_list':cat_list, 'isLoggedIn':isLoggedIn
     }
     return render(request, 'products/add_product.html', context)
+
+def returnProductCat(request, cat_pk):
+    cursor = connection.cursor()
+    sql = "SELECT CATEGORY_NAME FROM CATEGORY WHERE CATEGORY_ID = :cat_id"
+    
+    cursor.execute(sql,{'cat_id': cat_pk})
+    result = cursor.fetchall()
+    cursor.close()
+
+    context={'cat_name':result[0][0]}
+    return render(request, 'products/product_cat.html', context)

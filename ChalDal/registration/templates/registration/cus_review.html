@@ -1,0 +1,49 @@
+{% extends 'base.html'%} {% load static %} {% block titlename %}
+
+<title>Customer Review</title>
+
+{% endblock %} {% block content %}
+<p></p>
+<br />
+<div>
+  <div class="container">
+    <div class="main-body">
+      <div class="row gutters-sm">
+        <div class="col-md-2 mb-3">
+          <div class="sidebar d-grid gap-2 col-8">
+            <a class="btn btn-info" href="{% url 'registration:cus_home' %}">Basic Info</a>
+
+            <a class="btn btn-info" href="{% url 'registration:cus_order' %}">Order</a>
+
+            <a class="btn btn-info" href="{% url 'registration:cus_review' %}">Reviews</a>
+          </div>
+        </div>
+        <div class="col-md-10 mb-3">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" style="text-align: center">Date</th>
+                <th scope="col" style="text-align: center">Product</th>
+                <th scope="col" style="text-align: center">Seller</th>
+                <th scope="col" style="text-align: center">Rating</th>
+                <th scope="col" style="text-align: center">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for review in reviews_view %}
+              <tr>
+                <td style="text-align: center">{{review.date_of_review}}</td>
+                <td style="text-align: center">{{review.product_name}}</td>
+                <td style="text-align: center">{{review.seller_name}}</td>
+                <td style="text-align: center">{{review.rating}}&#47;5</td>
+                <td style="text-align: center">{{review.description}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
