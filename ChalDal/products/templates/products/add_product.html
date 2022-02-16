@@ -24,8 +24,8 @@
           </div>
           <div style="margin-bottom: 1em">
             <select name="cat_name" class="form-select" aria-label="Category">
-              {% for cat in cat_list %}
-              <option value="{{cat}}">{{cat}}</option>
+              {% for cat in catList %}
+              <option value="{{cat.cat_name}}">{{cat.cat_name}}</option>
               {% endfor %}
             </select>
           </div>

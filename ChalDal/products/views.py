@@ -54,12 +54,12 @@ def returnAddProduct(request):
 
         pname = prod_name.lower()
         cursor = connection.cursor()
-        sql = 'SELECT COUNT(*) FROM PRODUCT WHERE LOWER(NAME) = :pname'
-        cursor.execute(sql,{'pname': pname})
+        sql = 'SELECT COUNT(*) FROM PRODUCT WHERE LOWER(NAME) = :pname AND SELLER_ID = :sel_id'
+        cursor.execute(sql,{'pname': pname, 'sel_id':seller_id})
         result = cursor.fetchone()
         cursor.close()
         if result[0]>0:
-            context = {'isLoggedIn':isLoggedIn, 'status':"Product already exist!", 'acType':"seller"}
+            context = {'isLoggedIn':isLoggedIn, 'status':"Product already exist!", 'acType':"seller", 'catList':catList}
             return render(request, 'products/add_product.html', context)
 
         cursor = connection.cursor()
@@ -124,7 +124,7 @@ def returnProductCat(request, cat_pk):
     cat_name = result[0][0]
 
     cursor = connection.cursor()
-    sql = "SELECT NAME, DESCRIPTION, PRICE FROM PRODUCT WHERE CATEGORY_ID= :cat_id"
+    sql = "SELECT NAME, DESCRIPTION, PRICE, PRODUCT_ID FROM PRODUCT WHERE CATEGORY_ID= :cat_id"
     
     cursor.execute(sql,{'cat_id': cat_pk})
     result = cursor.fetchall()
@@ -136,7 +136,8 @@ def returnProductCat(request, cat_pk):
         prod_name = r[0]
         prod_des = r[1]
         prod_price = r[2]
-        row = {'prod_name':prod_name, 'prod_des':prod_des, 'prod_price': prod_price}
+        prod_id = r[3]
+        row = {'prod_name':prod_name, 'prod_des':prod_des, 'prod_price': prod_price, 'prod_id':prod_id}
         prod_list.append(row)
 
     context = {
@@ -145,3 +146,54 @@ def returnProductCat(request, cat_pk):
     }
     
     return render(request, 'products/product_cat.html', context)
+
+
+
+def returnProductDetails(request, prod_pk):
+    isLoggedIn=False
+    catList = categoryList()
+    acType=""
+    if request.session.has_key('cus_email'):
+        isLoggedIn=True
+        acType="customer"
+    if request.session.has_key('seller_email'):
+        isLoggedIn=True
+        acType="seller"
+
+    cursor = connection.cursor()
+    sql = """SELECT S.NAME, P.NAME, P.DESCRIPTION, P.EXPECTED_TIME_TO_DELIVER, P.PRICE, C. CATEGORY_NAME, P.RATING, P.PRODUCT_ID,
+            (SELECT PERCENTAGE_DISCOUNT FROM OFFER O WHERE O.PRODUCT_ID = P.PRODUCT_ID AND END_DATE>SYSDATE)
+            FROM PRODUCT P 
+                JOIN SELLER S ON(P.SELLER_ID = S.SELLER_ID)
+                JOIN CATEGORY C ON(P.CATEGORY_ID = C.CATEGORY_ID)
+            WHERE P.PRODUCT_ID = :prod_pk """
+    cursor.execute(sql,{'prod_pk': prod_pk})
+    r = cursor.fetchone()
+    cursor.close()
+
+    
+    seller_name = r[0]
+    prod_name = r[1]
+    prod_des = r[2]
+    exp_del_time = r[3]
+    prod_price = r[4]
+    categ_name = r[5]
+    prod_rating = int(r[6])
+    prod_id = r[7]
+    discount = r[8]
+    if discount == None:
+        discount=0
+    else:
+        discount = int(discount)
+    disc_price = prod_price* (100-discount)/100
+
+    rating_ind = []
+    for i in range(prod_rating):
+        rating_ind.append("a")
+
+    context = {'isLoggedIn':isLoggedIn, 'acType':acType, 'catList':catList, 
+                'seller_name':seller_name, 'prod_name':prod_name, 'prod_des':prod_des, 
+                'exp_del_time':exp_del_time, 'prod_price': prod_price, 'categ_name':categ_name, 
+                'rating_ind':rating_ind, 'prod_id':prod_id, 'discount':discount, 'disc_price':disc_price
+                }
+    return render(request, 'products/product_details.html', context)

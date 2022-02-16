@@ -1,0 +1,52 @@
+{% extends 'base.html'%} {% load static %} {% block staticfilesblock %}
+<link rel="stylesheet" href="{% static '/css/product_details_css.css' %}" />
+{% endblock %} {% block titlename %}
+
+<title></title>
+
+{% endblock %} {% block content %}
+
+<div class="container mt-5 mb-5">
+  <div class="row d-flex justify-content-center">
+    <div class="col-md-10">
+      <div class="card">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="images p-3">
+              <div class="text-center p-4"><img id="main-image" src="{% static '/images/eggs.png' %}" width="250" /></div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="product p-4">
+              <div class="mt-4 mb-3">
+                <p class="text-uppercase text-muted brand">Category: {{categ_name}}</p>
+                <span class="text-uppercase text-muted brand">Seller: {{seller_name}}</span>
+                <h5 class="text-uppercase">{{prod_name}}</h5>
+
+                <div class="price d-flex flex-row align-items-center">
+                  <span class="act-price">&#2547; {{disc_price}} &nbsp;</span>
+                  {% if discount %}
+                  <div class="ml-2"><small class="dis-price">&#2547; {{prod_price}}</small> <span> {{discount}}% OFF</span></div>
+                  {% endif %}
+                </div>
+              </div>
+              <p class="about">{{prod_des}}</p>
+              <ul style="justify-content: left" class="product_ul">
+                {% for i in rating_ind %}
+                <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+                {% endfor %}
+              </ul>
+              <p>Expected Delivery Time: {{exp_del_time}}</p>
+
+              <div class="cart mt-4 align-items-center">
+                <a href="" class="btn btn-outline-success">Buy Now</a>
+                <button class="btn btn-danger text-uppercase mr-2 px-4">Add to cart</button> <i class="fa fa-heart text-muted"></i> <i class="fa fa-share-alt text-muted"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

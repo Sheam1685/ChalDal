@@ -14,7 +14,7 @@
     <div class="content">
       <img class="product_img" src="{% static '/images/eggs.png' %}" />
       <h3 class="product_h3">{{prod.prod_name}}</h3>
-      <p class="product_p">{{prod.prod_des}}</p>
+      <p class="product_p"></p>
       <h6 class="product_h6">&#2547; {{prod.prod_price}}</h6>
       <ul class="product_ul">
         <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
@@ -23,7 +23,11 @@
         <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
         <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
       </ul>
-      <button class="buy-2 product_button">Buy Now</button>
+      {% if acType == 'customer' %}
+      <a style="text-decoration: none; color: white" type="button" class="buy-2 product_button" href="{% url 'products:product_details' prod.prod_id %}">Buy Now</a>
+      {% else %}
+      <a style="text-decoration: none; color: white" type="button" class="buy-2 product_button" href="#">Buy Now</a>
+      {% endif %}
     </div>
 
     {% endfor %}
