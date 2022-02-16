@@ -52,6 +52,16 @@ def returnAddProduct(request):
         exp_time_del = request.POST.get('exp_del_time')
         description = request.POST.get('description')
 
+        pname = prod_name.lower()
+        cursor = connection.cursor()
+        sql = 'SELECT COUNT(*) FROM PRODUCT WHERE LOWER(NAME) = :pname'
+        cursor.execute(sql,{'pname': pname})
+        result = cursor.fetchone()
+        cursor.close()
+        if result[0]>0:
+            context = {'isLoggedIn':isLoggedIn, 'status':"Product already exist!", 'acType':"seller"}
+            return render(request, 'products/add_product.html', context)
+
         cursor = connection.cursor()
         sql = 'SELECT MAX(PRODUCT_ID) FROM PRODUCT'
         cursor.execute(sql)
@@ -88,9 +98,10 @@ def returnAddProduct(request):
         return redirect('registration:seller_products')
 
     context = {
-        'cat_list':cat_list, 'isLoggedIn':isLoggedIn, 'catList':catList
+        'cat_list':cat_list, 'isLoggedIn':isLoggedIn, 'catList':catList,'acType':"seller"
     }
     return render(request, 'products/add_product.html', context)
+
 
 def returnProductCat(request, cat_pk):
 

@@ -11,7 +11,13 @@
     <div class="container d-flex justify-content-center">
       <div class="col-lg-8 align-justify-center pr-4 pl-0 contact-form">
         <form method="POST" style="font-weight: bold">
-          {% csrf_token %}
+          {% csrf_token %} {% if status %}
+          <div class="alert alert-warning d-flex align-items-center" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill" /></svg>
+            <div>{{status}}</div>
+          </div>
+          {% endif %}
+
           <div class="mb-3">
             <label for="prod_name" class="form-label">Product Name</label>
             <input type="text" name="prod_name" class="form-control" id="prod_name" placeholder="Product Name" />
