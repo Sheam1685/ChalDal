@@ -268,3 +268,7 @@ def returnAddOffer(request):
         'product_list':product_list, 'isLoggedIn':isLoggedIn
     }
     return render(request, 'products/add_offer.html', context)
+
+
+def returnCheckOut(request, prod_pk):
+    return render(request, 'products/checkout.html')

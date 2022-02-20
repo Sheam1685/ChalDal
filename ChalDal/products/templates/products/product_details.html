@@ -39,8 +39,8 @@
               <p>Expected Delivery Time: {{exp_del_time}}</p>
 
               <div class="cart mt-4 align-items-center">
-                <a href="" class="btn btn-outline-success">Buy Now</a>
-                <button class="btn btn-danger text-uppercase mr-2 px-4">Add to cart</button> <i class="fa fa-heart text-muted"></i> <i class="fa fa-share-alt text-muted"></i>
+                <a href="{% url 'products:checkout' prod_id %}" class="btn btn-outline-success">Buy Now</a>
+                <button class="btn btn-danger text-uppercase mr-2 px-4">Add to Bag</button> <i class="fa fa-heart text-muted"></i> <i class="fa fa-share-alt text-muted"></i>
               </div>
             </div>
           </div>

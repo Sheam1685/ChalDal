@@ -237,7 +237,7 @@ def returnSellerHome(request):
     catList = categoryList()
 
     cursor = connection.cursor()
-    sql = "SELECT NAME, ADDRESS, PHONE_NUMBER,  EMAIL_ID, WEBSITE FROM SELLER WHERE EMAIL_ID= :email_id"
+    sql = "SELECT NAME, ADDRESS, PHONE_NUMBER,  EMAIL_ID, WEBSITE, BALANCE FROM SELLER WHERE EMAIL_ID= :email_id"
     cursor.execute(sql,{'email_id':seller_email})
     result = cursor.fetchall()
     cursor.close()
@@ -247,10 +247,11 @@ def returnSellerHome(request):
     phone_no = result[0][2]
     email_id = result[0][3]
     website = result[0][4]
+    balance = result[0][5]
 
     basic_info = {
         'isLoggedIn':isLoggedIn, 'catList':catList,
-        'name':name, 'address':address, 'phone_no':phone_no, 'email_id':email_id, 'website':website
+        'name':name, 'address':address, 'phone_no':phone_no, 'email_id':email_id, 'website':website, 'balance':balance
     }
     
     return render(request, 'registration/seller_home.html', basic_info )
