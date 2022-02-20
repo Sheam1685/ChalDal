@@ -1,0 +1,105 @@
+{% extends 'base.html'%} {% load static %} {% block titlename %}
+
+<title>Add Offer</title>
+
+{% endblock %} {% block content %}
+<p></p>
+<br />
+<h2 style="text-align: center">New Offer</h2>
+<div class="container col-md-6">
+  <div class="row">
+    <div class="container d-flex justify-content-center">
+      <div class="col-lg-8 align-justify-center pr-4 pl-0 contact-form">
+        <form method="POST" style="font-weight: bold">
+          {% csrf_token %} {% if msg %}
+          <div
+            class="alert alert-warning d-flex align-items-center"
+            role="alert"
+          >
+            <svg
+              class="bi flex-shrink-0 me-2"
+              width="24"
+              height="24"
+              role="img"
+              aria-label="Warning:"
+            >
+              <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div>{{msg}}</div>
+          </div>
+          {% endif %} {% if status %}
+          <div
+            class="alert alert-warning d-flex align-items-center"
+            role="alert"
+          >
+            <svg
+              class="bi flex-shrink-0 me-2"
+              width="24"
+              height="24"
+              role="img"
+              aria-label="Warning:"
+            >
+              <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div>{{status}}</div>
+          </div>
+          {% else %}
+          <div style="margin-bottom: 1em">
+            <select
+              name="product_name"
+              class="form-select"
+              aria-label="Category"
+            >
+              {% for product in product_list %}
+              <option value="{{product}}">{{product}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <p>Offer will start from today</p>
+          <div class="col-md-6 mb-4 d-flex align-items-center">
+            <div class="form-outline datepicker w-100">
+              <label for="offer_end_date" class="form-label"
+                >Offer End Date</label
+              >
+              <input
+                type="text"
+                class="form-control form-control-lg"
+                id="offer_end_date"
+                name="oed"
+                placeholder="End Date of offer"
+                onfocus="(this.type='date')"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="percent_discount" class="form-label"
+              >Discount In Percent</label
+            >
+            <input
+              type="number"
+              name="pct"
+              class="form-control"
+              id="percent_discount"
+              placeholder="Percent Discount"
+            />
+          </div>
+          {% endif %} {% if status %}
+          <div class="d-grid col-md-6 mx-auto">
+            <a
+              class="btn btn-success"
+              href="{% url 'registration:seller_offers' %}"
+              >Return to Offer Page</a
+            >
+          </div>
+          {% else %}
+          <div class="d-grid col-md-6 mx-auto">
+            <button class="btn btn-success" type="submit">Add Offer</button>
+          </div>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

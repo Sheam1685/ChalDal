@@ -385,10 +385,8 @@ def returnCusReview(request):
 def returnSellerOffers(request):
     seller_email= request.session['seller_email']
     isLoggedIn = True
-    catList = categoryList()
-
     cursor = connection.cursor()
-    sql = """SELECT PRODUCT.NAME, OFFER.START_DATE, OFFER.END_DATE, OFFER.PERCENTAGE_DISCOUNT, OFFER.MINIMUM_QUANTITY_PURCHASED 
+    sql = """SELECT PRODUCT.NAME, TO_CHAR(OFFER.START_DATE, 'MONTH DD, YYYY'), TO_CHAR(OFFER.END_DATE, 'MONTH DD, YYYY'), OFFER.PERCENTAGE_DISCOUNT
     FROM OFFER LEFT OUTER JOIN SELLER
     ON(OFFER.SELLER_ID = SELLER.SELLER_ID)
     LEFT OUTER JOIN PRODUCT
@@ -397,25 +395,17 @@ def returnSellerOffers(request):
     cursor.execute(sql,{'email_id':seller_email})
     result = cursor.fetchall()
     cursor.close()
-    for row in result:
-        print(row[0])
-        print(row[1])
-        print(row[2])
-        print(row[3])
-        print(row[4])
-    print(result)
     offers_view = []
     for row in result:
         x={
             'name_of_product':row[0],
             'start_date':row[1],
             'end_date':row[2],
-            'discount':row[3],
-            'quantity':row[4]
+            'discount':row[3]
         }
         offers_view.append(x)
     reviews_info = {
-        'isLoggedIn':isLoggedIn, 'catList':catList,
+        'isLoggedIn':isLoggedIn,
         'offers_view':offers_view
     }
     return render(request, 'registration/seller_offers.html', reviews_info)

@@ -25,7 +25,6 @@
                 <th scope="col" style="text-align: center">Offer Start Date</th>
                 <th scope="col" style="text-align: center">Offer End Date</th>
                 <th scope="col" style="text-align: center">Discount</th>
-                <th scope="col" style="text-align: center">Minimum Quantity</th>
               </tr>
             </thead>
             <tbody>
@@ -35,12 +34,14 @@
                 <td style="text-align: center">{{offer.start_date}}</td>
                 <td style="text-align: center">{{offer.end_date}}</td>
                 <td style="text-align: center">{{offer.discount}}&percnt;</td>
-                <td style="text-align: center">{{offer.quantity}}</td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
+      </div>
+      <div class="d-grid d-md-flex justify-content-md-end">
+        <a class="btn btn-success" href="{% url 'products:add_offer' %}">Add New Offer</a>
       </div>
     </div>
   </div>

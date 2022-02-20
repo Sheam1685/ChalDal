@@ -1,6 +1,7 @@
 from multiprocessing import context
 from django.shortcuts import render, redirect, reverse
 from django.db import connection
+from datetime import datetime
 
 # Create your views here.
 
@@ -197,3 +198,73 @@ def returnProductDetails(request, prod_pk):
                 'rating_ind':rating_ind, 'prod_id':prod_id, 'discount':discount, 'disc_price':disc_price
                 }
     return render(request, 'products/product_details.html', context)
+
+
+def returnAddOffer(request):
+    isLoggedIn = True
+    seller_email= request.session['seller_email']
+    cursor = connection.cursor()
+    sql = """SELECT PRODUCT.NAME
+    FROM PRODUCT LEFT OUTER JOIN SELLER
+    ON(PRODUCT.SELLER_ID = SELLER.SELLER_ID)
+    WHERE SELLER.EMAIL_ID =: email_id
+    MINUS
+    SELECT PRODUCT.NAME
+    FROM PRODUCT LEFT OUTER JOIN SELLER
+    ON(PRODUCT.SELLER_ID = SELLER.SELLER_ID)
+    LEFT OUTER JOIN OFFER
+    ON(PRODUCT.PRODUCT_ID = OFFER.PRODUCT_ID)
+    WHERE SELLER.EMAIL_ID =: email_id AND OFFER.END_DATE > SYSDATE;"""
+    cursor.execute(sql, {'email_id':seller_email})
+    result = cursor.fetchall()
+    product_list =[]
+    for r in result:
+        product_list.append(r[0])
+    if not len(result):
+        status = "All of your products have running offers. No new offers can be added."
+        context = {
+        'product_list':product_list, 'isLoggedIn':isLoggedIn, 'status':status
+        }
+        return render(request, 'products/add_offer.html', context)
+    sql = """SELECT SELLER_ID FROM SELLER WHERE EMAIL_ID =: email_id;"""
+    cursor.execute(sql, {'email_id':seller_email})
+    result = cursor.fetchone()
+    seller_id = result[0]
+    
+    if request.method == 'POST':
+        prod_name = request.POST.get('product_name')
+        end_date = request.POST.get('oed')
+        discount = request.POST.get('pct')
+        CurrentDate = datetime.now()
+        if datetime.strptime(end_date, '%Y-%m-%d') < CurrentDate:
+            msg = 'End Date must be later than today'
+            context = {
+            'product_list':product_list, 'isLoggedIn':isLoggedIn, 'msg':msg
+            }
+            return render(request, 'products/add_offer.html', context)
+        sql = """SELECT PRODUCT_ID FROM PRODUCT 
+        WHERE SELLER_ID =: id AND NAME =: prod_name;"""
+        cursor.execute(sql, {'id':seller_id, 'prod_name':prod_name})
+        result = cursor.fetchone()
+        prod_id = result[0]
+        sql = """SELECT MAX(OFFER_NUMBER)
+        FROM OFFER
+        GROUP BY PRODUCT_ID, SELLER_ID
+        HAVING PRODUCT_ID =: prod_id AND SELLER_ID =: id;"""
+        cursor.execute(sql, {'id':seller_id, 'prod_id':prod_id})
+        count = cursor.fetchone()
+        if count == None:
+            offer_number = 1
+        else:
+            offer_number = count[0] + 1
+        
+        sql = """INSERT INTO OFFER VALUES(%s,%s,%s,SYSDATE,%s,%s)"""
+        cursor.execute(sql,[prod_id, seller_id, offer_number, end_date, discount])
+        connection.commit()
+        cursor.close()
+        return redirect('registration:seller_offers')
+
+    context = {
+        'product_list':product_list, 'isLoggedIn':isLoggedIn
+    }
+    return render(request, 'products/add_offer.html', context)
