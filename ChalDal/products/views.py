@@ -163,7 +163,7 @@ def returnProductDetails(request, prod_pk):
         acType="seller"
 
     cursor = connection.cursor()
-    sql = """SELECT S.NAME, P.NAME, P.DESCRIPTION, P.EXPECTED_TIME_TO_DELIVER, P.PRICE, C. CATEGORY_NAME, P.RATING, P.PRODUCT_ID,
+    sql = """SELECT S.NAME, P.NAME, P.DESCRIPTION, P.EXPECTED_TIME_TO_DELIVER, P.PRICE, C. CATEGORY_NAME, ROUND(AVG_RATING(P.PRODUCT_ID), 1), P.PRODUCT_ID,
             (SELECT PERCENTAGE_DISCOUNT FROM OFFER O WHERE O.PRODUCT_ID = P.PRODUCT_ID AND END_DATE>SYSDATE),
             (SELECT COUNT(*) FROM PRODUCT_UNIT PU WHERE P.PRODUCT_ID = PU.PRODUCT_ID AND STATUS = 'not sold'), S.SELLER_ID
             FROM PRODUCT P 
@@ -182,6 +182,7 @@ def returnProductDetails(request, prod_pk):
     prod_price = r[4]
     categ_name = r[5]
     prod_rating = int(r[6])
+    prod_float_rating = r[6]
     prod_id = r[7]
     discount = r[8]
     quantity = r[9]
@@ -246,7 +247,7 @@ def returnProductDetails(request, prod_pk):
                 'seller_name':seller_name, 'prod_name':prod_name, 'prod_des':prod_des, 
                 'exp_del_time':exp_del_time, 'prod_price': prod_price, 'categ_name':categ_name, 
                 'rating_ind':rating_ind, 'prod_id':prod_id, 'discount':discount, 'disc_price':disc_price, 'quantity':quantity,
-                'review_list':review_list, 'review_flag':review_flag
+                'review_list':review_list, 'review_flag':review_flag, 'prod_float_rating':prod_float_rating
                 }
     return render(request, 'products/product_details.html', context)
 
