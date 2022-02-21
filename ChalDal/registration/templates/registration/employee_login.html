@@ -13,31 +13,35 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="{% static '/css/cus_login_css.css' %}" />
-    <title>Seller Login</title>
+    <title>Employee Login</title>
   </head>
   <body>
     
     <section class="vh-100 gradient-custom">
       <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="d-grid gap-2 d-md-block d-md-flex justify-content-md-center" >
-            
-                <a class="btn btn-outline-light" href="{% url 'registration:cus_login' %}">Customer Login</a>
-                <p></p>
-                <a class="btn btn-outline-light" href="{% url 'registration:seller_login' %}">Seller Login</a>
-                <p></p>
-                <a class="btn btn-outline-light" href="{% url 'registration:employee_login' %}">Employee Login</a>
-              </div>
-              <p></p>
+            <p></p>
           <div class="col-12 col-md-8 col-lg-6 col-xl-5">
             <div class="card bg-dark text-white" style="border-radius: 1rem">
               <div class="card-body p-5 text-center">
                 <div class="mb-md-5 mt-md-4 pb-5">
-                  <h2 class="fw-bold mb-2">Seller LOGIN</h2>
+                  <h2 class="fw-bold mb-2">EMPLOYEE LOGIN</h2>
                   <h3 color="red">{{status}}</h3>
                   <p class="text-white-50 mb-5">Please enter your email and password!</p>
                   <form method="POST">
                     {% csrf_token %}
+                    <div style="margin-bottom: 1em">
+                        <select
+                          name="employee_type"
+                          class="form-select"
+                          aria-label="Category"
+                          class="col-12 col-md-8 col-lg-6 col-xl-5"
+                        >
+                            <option value="admin">ADMIN</option>
+                            <option value="cus_care">Customer Care</option>
+                            <option value="delivery_guy">Delivery Guy</option>
+                        </select>
+                      </div>
                     <div class="form-outline form-white mb-4">
                       <input type="email" name="email" id="typeEmailX" class="form-control form-control-lg" placeholder="Email" />
                       <label class="form-label visually-hidden" for="typeEmailX">Email</label>

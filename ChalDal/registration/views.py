@@ -203,6 +203,9 @@ def returnLogout(request):
     if request.session.has_key('seller_email'):
         request.session.pop('seller_email')
         return redirect('home')
+    if request.session.has_key('del_guy_email'):
+        request.session.pop('del_guy_email')
+        return redirect('home')
     
 
 def returnCustomerHome(request):
@@ -413,3 +416,145 @@ def returnSellerOffers(request):
         'offers_view':offers_view
     }
     return render(request, 'registration/seller_offers.html', reviews_info)
+
+
+def returnEmployeeLogin(request):
+    isLoggedIn = False
+    if request.method == 'POST':
+        emp_type = request.POST.get('employee_type')
+        print(emp_type)
+        email = request.POST.get('email')
+        print(email)
+        password = request.POST.get('password')
+        cursor = connection.cursor()
+        if emp_type == 'admin':
+            sql = """SELECT EMPLOYEE.PASSWORD
+            FROM ADMIN LEFT OUTER JOIN EMPLOYEE
+            ON(ADMIN.EMPLOYEE_ID = EMPLOYEE.EMPLOYEE_ID)
+            WHERE EMPLOYEE.EMAIL_ID =:email_id;"""
+            cursor.execute(sql,{'email_id':email})
+            result = cursor.fetchone()
+            cursor.close()            
+            if result == None:
+                return render(request, 'registration/employee_login.html',context={'status':"Incorrect email or password"} )
+            elif password == result[0]:
+                isLoggedIn= True
+                request.session['admin_email'] = email
+                return redirect('registration:admin_home')
+            else:
+                return render(request, 'registration/employee_login.html',context={'status':"Incorrect email or password"} )
+        elif emp_type == 'cus_care':
+            sql = """SELECT EMPLOYEE.PASSWORD
+            FROM CUSTOMER_CARE_EMPLOYEE LEFT OUTER JOIN EMPLOYEE
+            ON(CUSTOMER_CARE_EMPLOYEE.EMPLOYEE_ID = EMPLOYEE.EMPLOYEE_ID)
+            WHERE EMPLOYEE.EMAIL_ID =:email_id;"""
+            cursor.execute(sql,{'email_id':email})
+            result = cursor.fetchone()
+            cursor.close()            
+            if result == None:
+                return render(request, 'registration/employee_login.html',context={'status':"Incorrect email or password"} )
+            elif password == result[0]:
+                isLoggedIn= True
+                request.session['cus_care_email'] = email
+                return redirect('registration:cus_care_home')
+            else:
+                return render(request, 'registration/employee_login.html',context={'status':"Incorrect email or password"} )
+        
+        elif emp_type == 'delivery_guy':
+            sql = """SELECT EMPLOYEE.PASSWORD
+            FROM DELIVERY_GUY LEFT OUTER JOIN EMPLOYEE
+            ON(DELIVERY_GUY.EMPLOYEE_ID = EMPLOYEE.EMPLOYEE_ID)
+            WHERE EMPLOYEE.EMAIL_ID =:email_id;"""
+            cursor.execute(sql,{'email_id':email})
+            result = cursor.fetchone()
+            cursor.close()            
+            if result == None:
+                return render(request, 'registration/employee_login.html',context={'status':"Incorrect email or password"} )
+            elif password == result[0]:
+                isLoggedIn= True
+                request.session['del_guy_email'] = email
+                return redirect('registration:delivery_guy_home')
+            else:
+                return render(request, 'registration/employee_login.html',context={'status':"Incorrect email or password"} )
+        
+        else: 
+            print("Oh boy")
+    return render(request, 'registration/employee_login.html' )
+
+def returnAdminHome(request):
+    admin_email= request.session['admin_email']
+    isLoggedIn = True
+    return render(request, 'registration/admin_home.html' )
+
+def returnCusCareHome(request):
+    cus_care_email = request.session['cus_care_email']
+    isLoggedIn = True
+    return render(request, 'registration/cus_care_emp.html' )
+
+def returnCusCarePastReview(request):
+    cus_care_email = request.session['cus_care_email']
+    isLoggedIn = True
+    return render(request, 'registration/cus_care_emp_past.html')
+
+def returnDeliveryHome(request):
+    del_guy_email = request.session['del_guy_email']
+    isLoggedIn = True
+    return render(request, 'registration/del_guy_home.html')
+
+def returnDeliveryPending(request):
+    del_guy_email = request.session['del_guy_email']
+    cursor = connection.cursor()
+    sql = "SELECT EMPLOYEE_ID FROM EMPLOYEE WHERE EMAIL_ID= :del_guy_email"
+    cursor.execute(sql, {'del_guy_email':del_guy_email})
+    result = cursor.fetchone()
+    cursor.close()
+    del_guy_id = result[0]
+
+    isLoggedIn = True
+    cursor = connection.cursor()
+    sql ="""SELECT (CUSTOMER.FIRST_NAME ||' '|| CUSTOMER.LAST_NAME), CUSTOMER_ORDER.ORDER_DATE, CUSTOMER_ORDER.PICKUP_ADRS ,
+            CUSTOMER_ORDER.ORDER_ID
+            FROM CUSTOMER_ORDER LEFT OUTER JOIN CUSTOMER 
+            ON(CUSTOMER_ORDER.CUSTOMER_ID = CUSTOMER.CUSTOMER_ID)
+            WHERE ORDER_ID IN (SELECT ORDER_ID FROM CUSTOMER_ORDER MINUS SELECT ORDER_ID FROM PURCHASE_ORDER);"""
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    order_view = []
+    for row in result:
+        x = {
+            'cus_name':row[0],
+            'date':row[1],
+            'address':row[2],
+            'order_id': row[3]
+        }
+        order_view.append(x)
+    
+    if request.method == "POST":
+        ord_id = request.POST.get('order_id')
+        print(ord_id)
+        cursor = connection.cursor()
+        sql = "INSERT INTO PURCHASE_ORDER VALUES(:ord_id, :del_guy_id, SYSDATE, 'Delivered')"
+        cursor.execute(sql, {'ord_id':ord_id, 'del_guy_id':del_guy_id})
+        cursor.close()
+        return redirect('registration:delivery_pending')
+
+    view_order = {
+        'isLoggedIn':isLoggedIn,
+        'order_view':order_view
+    }
+    return render(request, 'registration/del_guy_pending.html', view_order)
+
+def returnDeliveryHomePast(request):
+    del_guy_email = request.session['del_guy_email']
+    isLoggedIn = True
+    return render(request, 'registration/del_guy_home_past.html')
+
+def returnHireCusCare(request):
+    admin_email= request.session['admin_email']
+    isLoggedIn = True
+    return render(request, 'registration/hire_cuscare_employee.html' )
+
+def returnHireDeliveryGuy(request):
+    admin_email= request.session['admin_email']
+    isLoggedIn = True
+    return render(request, 'registration/hire_deliveryguy.html' )
