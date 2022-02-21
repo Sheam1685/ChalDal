@@ -5,6 +5,8 @@ Products.views:::
 	   P.PRICE, C. CATEGORY_NAME, P.RATING, P.PRODUCT_ID,
        (SELECT PERCENTAGE_DISCOUNT FROM OFFER O 
 		   WHERE O.PRODUCT_ID = P.PRODUCT_ID AND END_DATE>SYSDATE)
+	   (SELECT COUNT(*) FROM PRODUCT_UNIT PU 
+		   WHERE P.PRODUCT_ID = PU.PRODUCT_ID AND STATUS = 'not sold') AS InStock
        FROM PRODUCT P 
        		JOIN SELLER S ON(P.SELLER_ID = S.SELLER_ID)
        		JOIN CATEGORY C ON(P.CATEGORY_ID = C.CATEGORY_ID)
@@ -23,6 +25,12 @@ Products.views:::
     	LEFT OUTER JOIN OFFER
     		ON(PRODUCT.PRODUCT_ID = OFFER.PRODUCT_ID)
     	WHERE SELLER.EMAIL_ID =: email_id AND OFFER.END_DATE > SYSDATE;"""
+
+3. returnCheckout=>
+	  """SELECT prod.NAME, prod.PRICE, sell.NAME
+         FROM PRODUCT prod JOIN SELLER sell
+            ON(prod.SELLER_ID = sell.SELLER_ID)
+         WHERE prod.PRODUCT_ID = :prod_id"""
 
 
 Registration.views:::

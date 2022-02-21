@@ -22,16 +22,17 @@
     <div class="row">
       <div class="col-75">
         <div class="container">
-          <form action="/action_page.php">
+          <form method="POST">
+            {% csrf_token %}
             <div class="row">
               <div class="col-50">
                 <h3>Billing Address</h3>
                 <label for="fname"><i class="fa fa-user"></i> Full Name</label>
-                <input class="form-control" type="text" id="fname" name="firstname" placeholder="John M. Doe" disabled readonly />
+                <input class="form-control" type="text" id="fname" name="firstname" placeholder="{{cus_name}}" disabled readonly />
                 <label for="email"><i class="fa fa-envelope"></i> Email</label>
-                <input class="form-control" type="text" id="email" name="email" placeholder="john@example.com" disabled readonly />
+                <input class="form-control" type="text" id="email" name="email" placeholder="{{cus_email}}" disabled readonly />
                 <label for="adr"><i class="fa fa-address-card-o"></i> PickUp Address</label>
-                <input type="text" id="adr" name="address" placeholder="542 W. 15th Street" />
+                <input type="text" id="adr" name="pickup_add" placeholder="542 W. 15th Street" />
               </div>
 
               <div class="col-50">
@@ -63,7 +64,7 @@
               </div>
             </div>
 
-            <input type="submit" value="Confirm Order" class="btn" />
+            <button class="btn" type="submit">Confirm Order</button>
           </form>
         </div>
       </div>
@@ -71,11 +72,12 @@
       <div class="col-25">
         <div class="container">
           <h4>Ordered Item</h4>
-          <p><a href="#">Product 1</a> <span class="price">$15</span></p>
+          <p><a href="#">{{prod_name}}</a> <span class="price">&#2547; {{prod_price}}</span></p>
+          <p>Seller: {{seller_name}}</p>
 
           <hr />
           <p>
-            Total <span class="price" style="color: black"><b>$30</b></span>
+            Total <span class="price" style="color: black"><b> &#2547; {{prod_price}}</b></span>
           </p>
         </div>
       </div>

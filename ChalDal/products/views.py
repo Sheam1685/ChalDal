@@ -163,7 +163,8 @@ def returnProductDetails(request, prod_pk):
 
     cursor = connection.cursor()
     sql = """SELECT S.NAME, P.NAME, P.DESCRIPTION, P.EXPECTED_TIME_TO_DELIVER, P.PRICE, C. CATEGORY_NAME, P.RATING, P.PRODUCT_ID,
-            (SELECT PERCENTAGE_DISCOUNT FROM OFFER O WHERE O.PRODUCT_ID = P.PRODUCT_ID AND END_DATE>SYSDATE)
+            (SELECT PERCENTAGE_DISCOUNT FROM OFFER O WHERE O.PRODUCT_ID = P.PRODUCT_ID AND END_DATE>SYSDATE),
+            (SELECT COUNT(*) FROM PRODUCT_UNIT PU WHERE P.PRODUCT_ID = PU.PRODUCT_ID AND STATUS = 'not sold')
             FROM PRODUCT P 
                 JOIN SELLER S ON(P.SELLER_ID = S.SELLER_ID)
                 JOIN CATEGORY C ON(P.CATEGORY_ID = C.CATEGORY_ID)
@@ -182,6 +183,7 @@ def returnProductDetails(request, prod_pk):
     prod_rating = int(r[6])
     prod_id = r[7]
     discount = r[8]
+    quantity = r[9]
     if discount == None:
         discount=0
     else:
@@ -195,7 +197,7 @@ def returnProductDetails(request, prod_pk):
     context = {'isLoggedIn':isLoggedIn, 'acType':acType, 'catList':catList, 
                 'seller_name':seller_name, 'prod_name':prod_name, 'prod_des':prod_des, 
                 'exp_del_time':exp_del_time, 'prod_price': prod_price, 'categ_name':categ_name, 
-                'rating_ind':rating_ind, 'prod_id':prod_id, 'discount':discount, 'disc_price':disc_price
+                'rating_ind':rating_ind, 'prod_id':prod_id, 'discount':discount, 'disc_price':disc_price, 'quantity':quantity
                 }
     return render(request, 'products/product_details.html', context)
 
@@ -271,4 +273,39 @@ def returnAddOffer(request):
 
 
 def returnCheckOut(request, prod_pk):
-    return render(request, 'products/checkout.html')
+    cus_email = request.session['cus_email']
+
+    cursor = connection.cursor()
+    sql = """SELECT FIRST_NAME||' '||LAST_NAME AS NAME
+            FROM CUSTOMER
+            WHERE EMAIL_ID = :cus_email
+            """
+    
+    cursor.execute(sql, {'cus_email':cus_email})
+    result = cursor.fetchone()
+    cursor.close()
+    cus_name = result[0]
+
+    cursor = connection.cursor()
+    sql = """SELECT prod.NAME, prod.PRICE, sell.NAME
+            FROM PRODUCT prod JOIN SELLER sell
+            ON(prod.SELLER_ID = sell.SELLER_ID)
+            WHERE prod.PRODUCT_ID = :prod_id
+            """
+    
+    cursor.execute(sql, {'prod_id':prod_pk})
+    result = cursor.fetchone()
+    cursor.close()
+    prod_name = result[0]
+    prod_price = result[1]
+    seller_name = result[2]
+
+    if request.method == 'POST':
+        pickup_addr = request.POST.get('pickup_add')
+
+    context = {
+        'cus_name':cus_name, 'cus_email':cus_email,
+        'prod_name':prod_name, 'prod_price':prod_price, 'seller_name':seller_name
+    }
+
+    return render(request, 'products/checkout.html', context)

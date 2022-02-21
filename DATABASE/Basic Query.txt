@@ -17,6 +17,11 @@ returnAddOffer=>
       GROUP BY PRODUCT_ID, SELLER_ID
       HAVING PRODUCT_ID =: prod_id AND SELLER_ID =: id;"""
 
+returnCheckout=>
+1. """SELECT FIRST_NAME||' '||LAST_NAME AS NAME
+	  FROM CUSTOMER
+      WHERE EMAIL_ID = :cus_email"""
+
 
 
 Registration.views:::

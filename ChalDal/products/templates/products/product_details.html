@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="{% static '/css/product_details_css.css' %}" />
 {% endblock %} {% block titlename %}
 
-<title></title>
+<title>{{prod_name}}</title>
 
 {% endblock %} {% block content %}
 
@@ -31,6 +31,15 @@
                 </div>
               </div>
               <p class="about">{{prod_des}}</p>
+              {% if quantity %}
+              <div>
+                <h6>InStock: {{quantity}}</h6>
+              </div>
+              {% else %}
+              <div>
+                <h5 style="color: red; font-weight: bold;">Out Of Stock</h6>
+              </div>
+              {% endif %}
               <ul style="justify-content: left" class="product_ul">
                 {% for i in rating_ind %}
                 <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
@@ -39,8 +48,12 @@
               <p>Expected Delivery Time: {{exp_del_time}}</p>
 
               <div class="cart mt-4 align-items-center">
+                {% if quantity %}
                 <a href="{% url 'products:checkout' prod_id %}" class="btn btn-outline-success">Buy Now</a>
                 <button class="btn btn-danger text-uppercase mr-2 px-4">Add to Bag</button> <i class="fa fa-heart text-muted"></i> <i class="fa fa-share-alt text-muted"></i>
+                {% else %}
+                <a href="#" class="btn btn-outline-success disabled">Buy Now</a>
+                {% endif %}
               </div>
             </div>
           </div>
