@@ -1,5 +1,6 @@
 {% extends 'base.html'%} {% load static %} {% block staticfilesblock %}
 <link rel="stylesheet" href="{% static '/css/product_details_css.css' %}" />
+<link rel="stylesheet" href="{% static '/css/review_css.css' %}" />
 {% endblock %} {% block titlename %}
 
 <title>{{prod_name}}</title>
@@ -62,4 +63,59 @@
     </div>
   </div>
 </div>
+
+{% if review_list %}
+<div class="container" style="width: 1000px;">
+<h3 style="text-align: center;">All Reviews</h3></div>
+{% for review in review_list %}
+<div class="container" style="width: 1000px;">
+  <div class=" row">
+      <div class="col-md-12">
+          <div class="d-flex flex-column comment-section">
+              <div class="bg-white p-2">
+                      <div class="d-flex flex-column justify-content-start ml-2"><span class="d-block font-weight-bold name">{{review.rev_provider}}</span><span class="date text-black-50">{{review.rev_date}}</span></div>
+                  </div>
+                  <ul style="justify-content: left" class="product_ul">
+                  {% for i in review.rating_string %}
+                  <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+                  {% endfor %}
+                </ul>
+                  <div class="">
+                      <p class="comment-text">{{review.rev_des}}</p>
+                      <hr/>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+{% endfor %}
+{% endif %}
+
+<p></p>
+
+{% if review_flag == 'Reviewed' %}
+<div style="text-align: center;" class="alert alert-danger container" role="alert">
+  You Already Reviewed this Product
+</div>
+{% else %}
+<div class="container" style="width: 1000px;">
+  <h3 style="text-align: center;">Write A Review</h3>
+  <form method="POST">
+    {% csrf_token %}
+  <div class="mb-3">
+    <label for="rating" class="form-label">Rating</label>
+    <input type="number" name="rating" class="form-control" id="rating" placeholder="Out of 5">
+  </div>
+  <div class="mb-3">
+    <label for="review_des" class="form-label">Review Description</label>
+    <textarea class="form-control" name="review_des" id="review_des" rows="5"></textarea>
+  </div>
+  
+  <button class="btn btn-success" type="submit">Post Review</button>
+  </form>
+</div>
+{% endif %}
+
+
 {% endblock %}

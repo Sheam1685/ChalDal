@@ -40,20 +40,17 @@
                 <td style="text-align: center">{{order.delivery_status}}</td>
                 <td style="text-align: center">{{order.delivery_guy}}</td>
                 <td style="text-align: center">{{order.phone}}</td>
-                {% if buttoninfo == 'Cancel Order' %}
-                <td style="text-align: center">
-                  <a class="btn btn-outline-dark me-md-2" role="button" href="#">Cancel Order</a>
-                </td>
-                {% elif buttoninfo == 'Return Order' %}
+
+                {% if order.buttoninfo == 'Return Order' %}
                 <td style="text-align: center">
                   <a class="btn btn-outline-dark me-md-2" role="button" href="#"> Return Order </a>
                 </td>
-                {% elif buttoninfo == 'Cancel Return' %}
-                <td style="text-align: center">
-                  <a class="btn btn-outline-dark me-md-2" role="button" href="#"> Cancel Return </a>
-                </td>
-                {% elif buttoninfo == 'None' %}
+
+                {% elif order.buttoninfo == 'nothing' %}
                 <td style="text-align: center">No Action Available</td>
+
+                {% elif order.buttoninfo == 'waiting' %}
+                <td style="text-align: center">Waiting for Return Approval</td>
                 {% endif %}
               </tr>
               {% endfor %}

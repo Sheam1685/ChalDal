@@ -1,4 +1,5 @@
 from multiprocessing import context
+import re
 from django.shortcuts import render, redirect, reverse
 from django.db import connection
 from datetime import datetime
@@ -164,7 +165,7 @@ def returnProductDetails(request, prod_pk):
     cursor = connection.cursor()
     sql = """SELECT S.NAME, P.NAME, P.DESCRIPTION, P.EXPECTED_TIME_TO_DELIVER, P.PRICE, C. CATEGORY_NAME, P.RATING, P.PRODUCT_ID,
             (SELECT PERCENTAGE_DISCOUNT FROM OFFER O WHERE O.PRODUCT_ID = P.PRODUCT_ID AND END_DATE>SYSDATE),
-            (SELECT COUNT(*) FROM PRODUCT_UNIT PU WHERE P.PRODUCT_ID = PU.PRODUCT_ID AND STATUS = 'not sold')
+            (SELECT COUNT(*) FROM PRODUCT_UNIT PU WHERE P.PRODUCT_ID = PU.PRODUCT_ID AND STATUS = 'not sold'), S.SELLER_ID
             FROM PRODUCT P 
                 JOIN SELLER S ON(P.SELLER_ID = S.SELLER_ID)
                 JOIN CATEGORY C ON(P.CATEGORY_ID = C.CATEGORY_ID)
@@ -184,6 +185,7 @@ def returnProductDetails(request, prod_pk):
     prod_id = r[7]
     discount = r[8]
     quantity = r[9]
+    seller_id = r[10]
     if discount == None:
         discount=0
     else:
@@ -194,10 +196,57 @@ def returnProductDetails(request, prod_pk):
     for i in range(prod_rating):
         rating_ind.append("a")
 
+    cursor = connection.cursor()
+    sql = """SELECT CUS.FIRST_NAME||' '||CUS.LAST_NAME AS NAME, RVW.REVIEW_DATE,
+		     RVW.RATING, RVW.DESCRIPTION
+		     FROM REVIEW RVW JOIN CUSTOMER CUS
+			    ON(RVW.CUSTOMER_ID = CUS.CUSTOMER_ID)
+		     WHERE PRODUCT_ID = :prod_id"""
+    cursor.execute(sql, {'prod_id': prod_id})
+    result = cursor.fetchall()
+    cursor.close()
+
+    review_list = []
+
+    for r in result:
+        rev_provider = r[0]
+        rev_date = r[1]
+        rev_rating = r[2]
+        rating_string = []
+        for i in range(rev_rating):
+            rating_string.append("a")
+        rev_des = r[3]
+        row = {'rev_provider':rev_provider, 'rev_date':rev_date, 'rev_rating':rev_rating, 'rev_des':rev_des, 'rating_string':rating_string}
+        review_list.append(row)
+
+    cus_email = request.session['cus_email']
+    cursor = connection.cursor()
+    sql = "SELECT CUSTOMER_ID FROM CUSTOMER WHERE EMAIL_ID = :cus_email"
+    cursor.execute(sql, {'cus_email':cus_email})
+    result = cursor.fetchone()
+    cursor.close()
+    cus_id = result[0]
+
+    cursor = connection.cursor()
+    review_flag = cursor.callfunc('REVIEW_CHECKER', str, (prod_id, cus_email))
+    cursor.close()
+
+    if request.method == 'POST':
+        rating = request.POST.get('rating')
+        review_des = request.POST.get('review_des')
+        cursor = connection.cursor()
+        sql = "INSERT INTO REVIEW VALUES(%s,%s,%s,SYSDATE,%s,%s)"
+        
+        cursor.execute(sql,[prod_id, seller_id, cus_id, rating, review_des])
+        connection.commit()
+        cursor.close()
+        return redirect('products:product_details', prod_pk = prod_pk)
+
     context = {'isLoggedIn':isLoggedIn, 'acType':acType, 'catList':catList, 
                 'seller_name':seller_name, 'prod_name':prod_name, 'prod_des':prod_des, 
                 'exp_del_time':exp_del_time, 'prod_price': prod_price, 'categ_name':categ_name, 
-                'rating_ind':rating_ind, 'prod_id':prod_id, 'discount':discount, 'disc_price':disc_price, 'quantity':quantity
+                'rating_ind':rating_ind, 'prod_id':prod_id, 'discount':discount, 'disc_price':disc_price, 'quantity':quantity,
+                'review_list':review_list, 'review_flag':review_flag
                 }
     return render(request, 'products/product_details.html', context)
 
@@ -307,6 +356,7 @@ def returnCheckOut(request, prod_pk):
         pickup_addr = request.POST.get('pickup_add')
         cursor = connection.cursor()
         cursor.callproc('CONFIRM_ORDER',(seller_id, cus_id, prod_id, pickup_addr))
+        cursor.close()
 
         return redirect('registration:cus_order')
 

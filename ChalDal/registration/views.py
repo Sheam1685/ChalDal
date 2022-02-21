@@ -320,15 +320,17 @@ def returnCusorder(request):
         items = items[1:]
         print(items)
         
-        if row[1] is None:
-            buttoninfo = 'Cancel Order'
+        if row[2] is None:
+            buttoninfo = "nothing"
+            print(1)
+        
+        elif row[5] is not None:
+                
+            buttoninfo = "waiting"
+            print(2)
         else:
-            if row[5] is None:
-                buttoninfo = 'Return Order'
-            elif row[5] == 'Waiting for approval':
-                buttoninfo = 'Cancel Return'
-            elif row[5] == 'Denied':
-                buttoninfo = 'None'
+            buttoninfo = "Return Order"
+            print(3)
         x={
             'date_of_order':row[0],
             'delivered_date':row[1],
@@ -336,14 +338,15 @@ def returnCusorder(request):
             'delivery_guy':row[3],
             'phone':row[4],
             'return_status':row[5],
-            'items':items
+            'items':items,
+            'buttoninfo':buttoninfo
         }
         orders_view.append(x)
     cursor.close()
     order_info = {
         'isLoggedIn':isLoggedIn, 'catList':catList,
         'orders_view':orders_view,
-        'buttoninfo':buttoninfo
+        
     }
     return render(request, 'registration/cus_order.html', order_info)
 
