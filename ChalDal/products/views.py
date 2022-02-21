@@ -276,7 +276,7 @@ def returnCheckOut(request, prod_pk):
     cus_email = request.session['cus_email']
 
     cursor = connection.cursor()
-    sql = """SELECT FIRST_NAME||' '||LAST_NAME AS NAME
+    sql = """SELECT FIRST_NAME||' '||LAST_NAME AS NAME, CUSTOMER_ID
             FROM CUSTOMER
             WHERE EMAIL_ID = :cus_email
             """
@@ -285,9 +285,10 @@ def returnCheckOut(request, prod_pk):
     result = cursor.fetchone()
     cursor.close()
     cus_name = result[0]
+    cus_id = result[1]
 
     cursor = connection.cursor()
-    sql = """SELECT prod.NAME, prod.PRICE, sell.NAME
+    sql = """SELECT prod.NAME, prod.PRICE, sell.NAME, sell.SELLER_ID, prod.PRODUCT_ID
             FROM PRODUCT prod JOIN SELLER sell
             ON(prod.SELLER_ID = sell.SELLER_ID)
             WHERE prod.PRODUCT_ID = :prod_id
@@ -299,9 +300,15 @@ def returnCheckOut(request, prod_pk):
     prod_name = result[0]
     prod_price = result[1]
     seller_name = result[2]
+    seller_id = result[3]
+    prod_id = result[4]
 
     if request.method == 'POST':
         pickup_addr = request.POST.get('pickup_add')
+        cursor = connection.cursor()
+        cursor.callproc('CONFIRM_ORDER',(seller_id, cus_id, prod_id, pickup_addr))
+
+        return redirect('registration:cus_order')
 
     context = {
         'cus_name':cus_name, 'cus_email':cus_email,
