@@ -338,9 +338,12 @@ def returnCheckOut(request, prod_pk):
     cus_id = result[1]
 
     cursor = connection.cursor()
-    sql = """SELECT prod.NAME, prod.PRICE, sell.NAME, sell.SELLER_ID, prod.PRODUCT_ID
+    sql = """SELECT prod.NAME, prod.PRICE, sell.NAME, sell.SELLER_ID, prod.PRODUCT_ID, OFFR.PERCENTAGE_DISCOUNT,
+            (SELECT COUNT(*) FROM PRODUCT_UNIT PU WHERE prod.PRODUCT_ID = PU.PRODUCT_ID AND STATUS = 'not sold')
             FROM PRODUCT prod JOIN SELLER sell
-            ON(prod.SELLER_ID = sell.SELLER_ID)
+                ON(prod.SELLER_ID = sell.SELLER_ID)
+            LEFT JOIN OFFER OFFR
+                ON(OFFR.PRODUCT_ID = prod.PRODUCT_ID AND OFFR.END_DATE>SYSDATE)
             WHERE prod.PRODUCT_ID = :prod_id
             """
     
@@ -352,18 +355,27 @@ def returnCheckOut(request, prod_pk):
     seller_name = result[2]
     seller_id = result[3]
     prod_id = result[4]
+    discount = result[5]
+    max_quant = result[6]
+
+    if discount == None:
+        discount=0
+    else:
+        discount = int(discount)
+    disc_price = prod_price* (100-discount)/100
 
     if request.method == 'POST':
         pickup_addr = request.POST.get('pickup_add')
+        input_quantity = request.POST.get('quant')
         cursor = connection.cursor()
-        cursor.callproc('CONFIRM_ORDER',(seller_id, cus_id, prod_id, pickup_addr))
+        cursor.callproc('CONFIRM_ORDER',(seller_id, cus_id, prod_id, pickup_addr,input_quantity))
         cursor.close()
 
         return redirect('registration:cus_order')
 
     context = {
         'cus_name':cus_name, 'cus_email':cus_email,
-        'prod_name':prod_name, 'prod_price':prod_price, 'seller_name':seller_name
+        'prod_name':prod_name, 'prod_price':disc_price, 'seller_name':seller_name, 'max_quant':max_quant
     }
 
     return render(request, 'products/checkout.html', context)

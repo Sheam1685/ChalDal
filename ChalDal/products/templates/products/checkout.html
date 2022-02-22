@@ -65,7 +65,7 @@
             </div>
 
             <button class="btn" type="submit">Confirm Order</button>
-          </form>
+          
         </div>
       </div>
 
@@ -73,13 +73,25 @@
         <div class="container">
           <h4>Ordered Item</h4>
           <p><a href="#">{{prod_name}}</a> <span class="price">&#2547; {{prod_price}}</span></p>
-          <p>Seller: {{seller_name}}</p>
+          <div class="row g-3 ">
+            <div class="col-auto">
+              <label for="quant" class="col-form-label">&nbsp; Quantity:</label>
+            </div>
+            <div class="col-auto">
+              <input type="number" name="quant" id="quant" class="form-control" min="1" max="{{max_quant}}">
+            </div>
+          </div>
+          <p></p>
+          <h6>Seller: {{seller_name}}</h6>
 
           <hr />
+          <!--
           <p>
             Total <span class="price" style="color: black"><b> &#2547; {{prod_price}}</b></span>
           </p>
+          -->
         </div>
+      </form>
       </div>
     </div>
   </body>

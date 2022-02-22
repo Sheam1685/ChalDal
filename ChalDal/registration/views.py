@@ -308,7 +308,8 @@ def returnCusorder(request):
     ON(CUSTOMER_ORDER.ORDER_ID = PURCHASE_ORDER.ORDER_ID)
     LEFT OUTER JOIN RETURN_ORDER
     ON(CUSTOMER_ORDER.ORDER_ID = RETURN_ORDER.ORDER_ID)
-    WHERE CUSTOMER_ID = (SELECT CUSTOMER_ID FROM CUSTOMER WHERE EMAIL_ID =:email_id);"""
+    WHERE CUSTOMER_ID = (SELECT CUSTOMER_ID FROM CUSTOMER WHERE EMAIL_ID =:email_id)
+    ORDER BY CUSTOMER_ORDER.ORDER_DATE DESC;"""
     cursor.execute(sql,{'email_id':cus_email})
     result = cursor.fetchall()
     print(result)
@@ -732,7 +733,7 @@ def returnDeliveryHomePast(request):
     cursor = connection.cursor()
     sql = """SELECT (CUSTOMER.FIRST_NAME || ' ' || CUSTOMER.LAST_NAME),
     PURCHASE_ORDER.DELIVERED_DATE,  
-    CUSTOMER_ORDER.PICKUP_ADRS
+    CUSTOMER_ORDER.PICKUP_ADRS, CUSTOMER_ORDER.ORDER_ID , CUSTOMER_ORDER.ORDER_DATE
     FROM PURCHASE_ORDER LEFT OUTER JOIN CUSTOMER_ORDER
     ON(PURCHASE_ORDER.ORDER_ID = CUSTOMER_ORDER.ORDER_ID)
     LEFT OUTER JOIN  CUSTOMER
@@ -747,15 +748,29 @@ def returnDeliveryHomePast(request):
     WHERE EMPLOYEE.EMAIL_ID =:email_id;"""
     cursor.execute(sql, {'email_id':del_guy_email})
     result1 = cursor.fetchone()
-    cursor.close()
     order_view = []
     for row in result:
+        id = row[3]
+        sql = """SELECT PRODUCT.PRODUCT_ID, PRODUCT.NAME, COUNT(ORDERED_ITEMS.ITEM_NUMBER) ITEM_COUNT
+        FROM ORDERED_ITEMS LEFT OUTER JOIN PRODUCT
+        ON(ORDERED_ITEMS.PRODUCT_ID = PRODUCT.PRODUCT_ID)
+        WHERE ORDER_ID =:id
+        GROUP BY PRODUCT.PRODUCT_ID, PRODUCT.NAME;"""
+        cursor.execute(sql,{'id':id})
+        result2 = cursor.fetchall()
+        items = ""
+        for row1 in result2:
+            items = items + "," + row1[1] + "(" + str(row1[2]) + " pcs)"
+        items = items[1:]
         x = {
             'cus_name':row[0],
-            'date':row[1],
-            'address':row[2]
+            'del_date':row[1],
+            'address':row[2],
+            'items':items,
+            'ord_date':row[4]
         }
         order_view.append(x)
+    cursor.close()
     view_order = {
         'isLoggedIn':isLoggedIn,
         'order_view':order_view,
