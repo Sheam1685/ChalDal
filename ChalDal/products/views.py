@@ -65,38 +65,10 @@ def returnAddProduct(request):
             return render(request, 'products/add_product.html', context)
 
         cursor = connection.cursor()
-        sql = 'SELECT MAX(PRODUCT_ID) FROM PRODUCT'
-        cursor.execute(sql)
-        
-        last_id = cursor.fetchone()
-        last_id = last_id[0]
-        if last_id is not  None:
-            prod_id = last_id + 1
-        else:
-            prod_id = 1
-
-        cursor = connection.cursor()
-        sql = "SELECT CATEGORY_ID FROM CATEGORY WHERE CATEGORY_NAME = :cat"
-        cursor.execute(sql,{'cat':cat_name})
-        cat_id = cursor.fetchone()
-        cat_id = cat_id[0]
-
-        cursor = connection.cursor()
-        sql = "INSERT INTO PRODUCT VALUES(%s,%s,%s,%s,%s,%s,%s)"
-
-        print(prod_id, seller_id, prod_name, cat_id, description, exp_time_del, price)
-        cursor.execute(sql,[prod_id, seller_id, prod_name, cat_id, description, exp_time_del, price])
+        cursor.callproc('ADD_PRODUCT',(prod_name,seller_id, cat_name, price, quantity, exp_time_del, description))
         connection.commit()
         cursor.close()
-
         
-        for i in range(quantity):
-            cursor = connection.cursor()
-            sql = "INSERT INTO PRODUCT_UNIT VALUES(%s,%s,%s,%s)"
-            item_no = i+1
-            cursor.execute(sql,[prod_id, seller_id, item_no, "not sold"])
-            connection.commit
-            cursor.close()
         return redirect('registration:seller_products')
 
     context = {

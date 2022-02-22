@@ -201,19 +201,19 @@ def returnLogout(request):
     isLoggedIn=False
     if request.session.has_key('cus_email'):
         request.session.pop('cus_email')
-        return redirect('home')
+        return redirect('homeApp:home')
     if request.session.has_key('seller_email'):
         request.session.pop('seller_email')
-        return redirect('home')
+        return redirect('homeApp:home')
     if request.session.has_key('del_guy_email'):
         request.session.pop('del_guy_email')
-        return redirect('home')
+        return redirect('homeApp:home')
     if request.session.has_key('admin_email'):
         request.session.pop('admin_email')
-        return redirect('home')
+        return redirect('homeApp:home')
     if request.session.has_key('cus_care_email'):
         request.session.pop('cus_care_email')
-        return redirect('home')
+        return redirect('homeApp:home')
     
 
 def returnCustomerHome(request):
