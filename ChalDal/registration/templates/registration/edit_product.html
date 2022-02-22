@@ -1,0 +1,45 @@
+{% extends 'base.html'%} {% load static %} {% block titlename %}
+
+<title>Add Product</title>
+
+{% endblock %} {% block content %}
+<p></p>
+<br />
+<h2 style="text-align: center">Edit Product</h2>
+<div class="container col-md-6">
+  <div class="row">
+    <div class="container d-flex justify-content-center">
+      <div class="col-lg-8 align-justify-center pr-4 pl-0 contact-form">
+        <form method="POST" style="font-weight: bold">
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label for="prod_name" class="form-label">Product Name</label>
+            <input type="text" name="prod_name" class="form-control" id="prod_name" value="{{prod_name}}" disabled />
+          </div>
+          <div class="mb-3">
+            <label for="cat_name" class="form-label">Category Name</label>
+            <input type="text" name="cat_name" class="form-control" id="cat_name" value="{{cat_name}}" disabled />
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input type="text" name="price" class="form-control" id="price" value="{{prod_price}}" disabled />
+          </div>
+          <div class="mb-3">
+            <label for="quantity" class="form-label">Quantity In Stock</label>
+            <input type="number" name="quantity" class="form-control" id="quantity" value="{{quantity}}" disabled />
+          </div>
+          <div class="mb-3">
+            <label for="new_quantity" class="form-label">Add In Stock</label>
+            <input type="number" name="new_quantity" class="form-control" id="new_quantity" placeholder="Add Quantity" />
+          </div>
+          <div class="d-grid col-md-6 mx-auto">
+            <button class="btn btn-success" type="submit">Edit Product</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

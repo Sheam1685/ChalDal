@@ -16,7 +16,6 @@
           <a class="btn btn-info" href="{% url 'registration:seller_products' %}">Product</a>
 
           <a class="btn btn-info" href="{% url 'registration:seller_offers' %}">Offers</a>
-          <a class="btn btn-info" href="#">Advertisement</a>
         </div>
       </div>
       <div class="col-md-10 mb-3">
@@ -27,7 +26,7 @@
               <th scope="col">Name</th>
               <th scope="col">Category</th>
               <th scope="col">In Stock</th>
-              <th scope="col">Edit Details</th>
+              <th style="text-align: center" scope="col">Edit Details</th>
             </tr>
           </thead>
           <tbody>
@@ -36,7 +35,7 @@
               <td>{{p.prod_name}}</td>
               <td>{{p.cat_name}}</td>
               <td>{{p.in_stock}}</td>
-              <td><a href="#">Edit</a></td>
+              <td style="text-align: center"><a class="btn btn-info" href="{% url 'registration:edit_product' p.prod_id %}">Edit</a></td>
             </tr>
             {% endfor %}
           </tbody>

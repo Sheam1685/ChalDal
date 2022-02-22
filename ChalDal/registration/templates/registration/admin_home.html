@@ -14,42 +14,23 @@
     <title>Home of ADMIN</title>
   </head>
   <body>
-    <div class="p-3 mb-2 bg-info text-white" style="text-align: center">
-      Welcome Home, {{name}}
-    </div>
+    <div class="p-3 mb-2 bg-info text-white" style="text-align: center">Welcome Home, {{name}}</div>
     <div class="container">
       <div class="main-body">
         <div class="row gutters-sm">
           <div class="col-md-3 mb-3">
             <div class="sidebar d-grid gap-2 col-6" style="padding-top: 50px">
-              <a class="btn btn-info" href="{% url 'registration:admin_home' %}"
-                >Home</a
-              >
-              <a
-                class="btn btn-info"
-                href="{% url 'registration:hire_cus_care' %}"
-                >Hire Customer Care Employee</a
-              >
-              <a
-                class="btn btn-info"
-                href="{% url 'registration:hire_deliveryguy' %}"
-                >Hire delivery Guy</a
-              >
-              <a class="btn btn-danger" href="{% url 'registration:logout' %}"
-                >Log Out</a
-              >
+              <a class="btn btn-info" href="{% url 'registration:admin_home' %}">Home</a>
+              <a class="btn btn-info" href="{% url 'registration:hire_cus_care' %}">Hire Customer Care Employee</a>
+              <a class="btn btn-info" href="{% url 'registration:hire_deliveryguy' %}">Hire delivery Guy</a>
+              <a class="btn btn-danger" href="{% url 'registration:logout' %}">Log Out</a>
             </div>
           </div>
           <div class="col-md-3 mb-3" style="padding-top: 50px">
             <div class="card">
               <div class="card-body">
                 <div class="d-flex flex-column align-items-center text-center">
-                  <img
-                    src="https://bootdey.com/img/Content/avatar/avatar7.png"
-                    alt="Admin"
-                    class="rounded-circle"
-                    width="150"
-                  />
+                  <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150" />
                 </div>
               </div>
             </div>
@@ -92,11 +73,6 @@
                   <div class="col-sm-9 text-secondary">{{address}}</div>
                 </div>
                 <hr />
-                <div class="row">
-                  <div class="col-sm-12">
-                    <a class="btn btn-info" target="__blank" href="#">Edit</a>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

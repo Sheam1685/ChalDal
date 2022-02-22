@@ -1,4 +1,7 @@
 from audioop import reverse
+from multiprocessing import context
+from sqlite3 import Cursor
+from unittest import result
 from django.shortcuts import render, redirect, reverse
 from django.db import connection
 from django.http import HttpResponse, HttpResponseRedirect
@@ -273,20 +276,20 @@ def returnSellerProducts(request):
     catList = categoryList()
 
     cursor = connection.cursor()
-    sql = """SELECT P.NAME, C.CATEGORY_NAME, 
+    sql = """SELECT P.NAME, C.CATEGORY_NAME, P.PRODUCT_ID,
         (SELECT COUNT(*) FROM PRODUCT_UNIT U WHERE U.STATUS='not sold' AND U.PRODUCT_ID=P.PRODUCT_ID AND U.SELLER_ID=P.SELLER_ID) AS IN_STOCK 
         FROM PRODUCT P JOIN CATEGORY C ON(P.CATEGORY_ID=C.CATEGORY_ID) 
         WHERE P.SELLER_ID=(SELECT S.SELLER_ID FROM SELLER S WHERE S.EMAIL_ID=:email_id)"""
     cursor.execute(sql,{'email_id':seller_email})
     result = cursor.fetchall()
     cursor.close()
-    print(result)
     products_view = []
     for row in result:
         x={
             'prod_name':row[0],
             'cat_name':row[1],
-            'in_stock':row[2]
+            'prod_id':row[2],
+            'in_stock':row[3]
         }
         products_view.append(x)
     view_product = {
@@ -905,3 +908,32 @@ def returnHireDeliveryGuy(request):
         cursor.close()
         return redirect('registration:admin_home')
     return render(request, 'registration/hire_deliveryguy.html' )
+
+
+def returnEditProduct(request, prod_pk):
+    isLoggedIn = True
+    catList = categoryList()
+    seller_email= request.session['seller_email']
+
+    cursor = connection.cursor()
+    sql = """SELECT P.NAME, P.PRICE,
+            (SELECT C.CATEGORY_NAME FROM CATEGORY C WHERE C.CATEGORY_ID = P.CATEGORY_ID),
+            (SELECT COUNT(*) FROM PRODUCT_UNIT PU WHERE PU.PRODUCT_ID = P.PRODUCT_ID AND PU.STATUS='not sold')
+            FROM PRODUCT P
+            WHERE P.PRODUCT_ID = :prod_pk"""
+    cursor.execute(sql, {'prod_pk':prod_pk})
+    r = cursor.fetchone()
+
+    if request.method == 'POST':
+        new_quantity = request.POST.get('new_quantity')
+        cursor = connection.cursor()
+        cursor.callproc('EDIT_PRODUCT',(prod_pk, new_quantity))
+        connection.commit()
+        cursor.close()
+        return redirect('registration:seller_products')
+
+    context = {
+        'isLoggedIn':isLoggedIn, 'catList':catList,
+        'prod_name':r[0], 'prod_price':r[1], 'cat_name': r[2], 'quantity':r[3]
+    }
+    return render(request, 'registration/edit_product.html', context )

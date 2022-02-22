@@ -24,4 +24,5 @@ urlpatterns = [
     path('cus_order/', views.returnCusorder, name = 'cus_order'),
     path('cus_review/', views.returnCusReview, name = 'cus_review'),
     path('seller_offers/', views.returnSellerOffers, name = 'seller_offers'),
+    path('edit_product/<str:prod_pk>/', views.returnEditProduct, name = 'edit_product'),
 ]
