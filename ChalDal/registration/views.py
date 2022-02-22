@@ -162,7 +162,7 @@ def returnLogin(request):
             request.session['cus_email'] = email
             #return HttpResponseRedirect(reverse('cus_home'))
             #return render(request, 'registration/cus_home.html', context={'isLoggedIn':isLoggedIn} )
-            return redirect('home')
+            return redirect('homeApp:home')
 
         else:
             return render(request, 'registration/cus_login.html',context={'status':"Incorrect email or password"} )

@@ -40,7 +40,7 @@
       style="background-color: #ecc766; "
     >
       <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'home' %}">
+        <a class="navbar-brand" href="{% url 'homeApp:home' %}">
           <img
             src="{% static '/images/logo2.png' %}"
             width="150px"
@@ -62,7 +62,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+              <a class="nav-link active" aria-current="page" href="{% url 'homeApp:home' %}">Home</a>
             </li>
             <li class="nav-item dropdown">
               <a
@@ -88,7 +88,9 @@
               <a class="nav-link" href="#">Offers</a>
             </li>
           </ul>
-          <form class="d-flex">
+          {% if searchbar %}
+          <form class="d-flex" method="POST">
+            {% csrf_token %}
             <div class="input-group">
               <span class="input-group-text" id="basic-addon1">
                 <img
@@ -104,12 +106,14 @@
                 placeholder="Search for Products"
                 aria-label="Search"
                 style="width: 350px"
+                name="searchTerm"
               />
               <button class="btn btn-outline-success me-md-5" type="submit">
                 Search
               </button>
             </div>
           </form>
+          {% endif %}
           {% if isLoggedIn %}
           <div class="d-grid d-md-flex justify-content-md-end">
             {% if acType == "customer" %}
