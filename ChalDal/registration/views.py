@@ -75,7 +75,7 @@ def returnSignUp(request):
         connection.commit()
         cursor.close()
 
-        return render(request, 'homeApp/home_page.html')
+        return redirect('homeApp:home')
 
         #print(user_id, fname, lname,  address, phn, dob, email,password)
 
@@ -105,13 +105,13 @@ def returnSellerSignUp(request):
             user_id = 1
 
         cursor = connection.cursor()
-        sql = "INSERT INTO SELLER VALUES(%s,%s,%s,%s,%s,%s,%s)"
+        sql = "INSERT INTO SELLER VALUES(%s,%s,%s,%s,%s,%s,%s, 1000)"
         
         cursor.execute(sql,[user_id, name, address, phn, email,website, password])
         connection.commit()
         cursor.close()
 
-        return render(request, 'homeApp/home_page.html')
+        return redirect('homeApp:home')
 
 
     return render(request, 'registration/seller_signup.html')
@@ -739,8 +739,8 @@ def returnCusCarePastReview(request):
             'return_date':row[2],
             'complaint':row[3],
             'delivery_date':row[5],
-            'delivery_guy':row[6],
-            'action':row[7],
+            'delivery_guy_id':row[6],
+            'delivery_guy':row[7],
             'items':items
         }
         orders_view.append(x)
