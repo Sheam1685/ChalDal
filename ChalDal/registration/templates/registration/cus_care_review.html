@@ -52,11 +52,13 @@
                     <td style="text-align: center">{{order.delivery_guy}}</td>
                     <td style="text-align: center">{{order.complaint}}</td>
                     <td style="text-align: center">
-                      <div class="d-grid d-md-flex justify-content-md-end">
-                        <a class="btn btn-outline-success me-md-2" role="button" href="#"> Accept </a>
-
-                        <a class="btn btn-outline-danger" role="button" href="">Deny</a>
-                      </div>
+                      <form method="POST">
+                        {% csrf_token %}
+                        <div class="d-grid d-md-flex justify-content-md-end">
+                          <input type="hidden" name="ord_id" value="{{order.ord_id}}" />
+                          <button class="btn btn-outline-success" type="submit">Accept</button>
+                        </div>
+                      </form>
                     </td>
                   </tr>
                   {% endfor %}

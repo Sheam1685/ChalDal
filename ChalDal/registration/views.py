@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect, reverse
 from django.db import connection
 from django.http import HttpResponse, HttpResponseRedirect
 
+
+
 # Create your views here.
 
 def findAcType(email):
@@ -312,7 +314,7 @@ def returnCusorder(request):
     ORDER BY CUSTOMER_ORDER.ORDER_DATE DESC;"""
     cursor.execute(sql,{'email_id':cus_email})
     result = cursor.fetchall()
-    print(result)
+    
     orders_view = []
     buttoninfo = ""
     for row in result:
@@ -328,19 +330,21 @@ def returnCusorder(request):
         for row1 in result1:
             items = items + "," + row1[1] + "(" + str(row1[2]) + " pcs)"
         items = items[1:]
-        print(items)
+        
         
         if row[2] is None:
             buttoninfo = "nothing"
-            print(1)
+            
         
         elif row[5] is not None:
-                
-            buttoninfo = "waiting"
-            print(2)
+            if row[5]=="Accepted":
+                buttoninfo = "accepted"
+            else:
+                buttoninfo = "waiting"
+            
         else:
             buttoninfo = "Return Order"
-            print(3)
+            
         x={
             'date_of_order':row[0],
             'delivered_date':row[1],
@@ -349,10 +353,23 @@ def returnCusorder(request):
             'phone':row[4],
             'return_status':row[5],
             'items':items,
-            'buttoninfo':buttoninfo
+            'buttoninfo':buttoninfo,
+            'ord_id':id
         }
         orders_view.append(x)
     cursor.close()
+    if request.method=="POST":
+        complain_ord_id = request.POST.get('order_id')
+        complaint_des = request.POST.get('complain')
+        
+        cursor = connection.cursor()
+        sql = "INSERT INTO RETURN_ORDER VALUES(%s,%s,3, SYSDATE, 'Waiting for approval')"
+        
+        cursor.execute(sql,[complain_ord_id, complaint_des])
+        connection.commit()
+        cursor.close()
+
+        return redirect('registration:cus_order')
     order_info = {
         'isLoggedIn':isLoggedIn, 'catList':catList,
         'orders_view':orders_view,
@@ -588,12 +605,13 @@ def returnCusCarePendingReviews(request):
     cus_care_email = request.session['cus_care_email']
     isLoggedIn = True
     cursor = connection.cursor()
-    sql = """SELECT FIRST_NAME || ' ' ||LAST_NAME
+    sql = """SELECT FIRST_NAME || ' ' ||LAST_NAME, CUSTOMER_CARE_EMPLOYEE.EMPLOYEE_ID
     FROM CUSTOMER_CARE_EMPLOYEE LEFT OUTER JOIN EMPLOYEE
     ON(CUSTOMER_CARE_EMPLOYEE.EMPLOYEE_ID = EMPLOYEE.EMPLOYEE_ID)
     WHERE EMPLOYEE.EMAIL_ID =:email_id;"""
     cursor.execute(sql, {'email_id':cus_care_email})
     result2 = cursor.fetchone()
+    cus_care_emplID = result2[1]
     sql = """SELECT CUSTOMER.FIRST_NAME || ' ' || CUSTOMER.LAST_NAME, 
     CUSTOMER_ORDER.ORDER_DATE, RETURN_ORDER.RETURN_DATE, RETURN_ORDER.COMPLAINT_DES, 
     RETURN_ORDER.ORDER_ID, PURCHASE_ORDER.DELIVERED_DATE, EMPLOYEE.FIRST_NAME ||' '|| EMPLOYEE.LAST_NAME
@@ -629,10 +647,26 @@ def returnCusCarePendingReviews(request):
             'complaint':row[3],
             'delivery_date':row[5],
             'delivery_guy':row[6],
-            'items':items
+            'items':items,
+            'ord_id':id
         }
         orders_view.append(x)
     cursor.close()
+
+    if request.method =="POST":
+        return_ord_id = request.POST.get('ord_id')
+        print(return_ord_id)
+
+        cursor = connection.cursor()
+        sql = "UPDATE RETURN_ORDER SET CUSTOMER_CARE_EMPLOYEE_ID=:empl_id, APPROVAL_STATUS='Accepted' WHERE ORDER_ID=:ord_id"
+        
+        cursor.execute(sql,{'empl_id':cus_care_emplID, 'ord_id':return_ord_id})
+        connection.commit()
+        cursor.close()
+
+        return redirect('registration:cus_care_past_review')
+        
+
     order_info = {
         'isLoggedIn':isLoggedIn,
         'orders_view':orders_view,
@@ -655,16 +689,18 @@ def returnCusCarePastReview(request):
     sql = """SELECT CUSTOMER.FIRST_NAME || ' ' || CUSTOMER.LAST_NAME, CUSTOMER_ORDER.ORDER_DATE, 
     RETURN_ORDER.RETURN_DATE, RETURN_ORDER.COMPLAINT_DES, RETURN_ORDER.ORDER_ID, 
     PURCHASE_ORDER.DELIVERED_DATE, PURCHASE_ORDER.DELIVERY_EMPLOYEE_ID, 
-    EMPLOYEE.FIRST_NAME ||' '|| EMPLOYEE.LAST_NAME, RETURN_ORDER.APPROVAL_STATUS
+    E1.FIRST_NAME ||' '|| E1.LAST_NAME, RETURN_ORDER.APPROVAL_STATUS
     FROM RETURN_ORDER LEFT OUTER JOIN CUSTOMER_ORDER
     ON(RETURN_ORDER.ORDER_ID = CUSTOMER_ORDER.ORDER_ID)
     LEFT OUTER JOIN PURCHASE_ORDER
     ON(RETURN_ORDER.ORDER_ID = PURCHASE_ORDER.ORDER_ID)
     LEFT OUTER JOIN CUSTOMER
     ON(CUSTOMER_ORDER.CUSTOMER_ID = CUSTOMER.CUSTOMER_ID)
-    LEFT OUTER JOIN EMPLOYEE
-    ON(PURCHASE_ORDER.DELIVERY_EMPLOYEE_ID = EMPLOYEE.EMPLOYEE_ID)
-    WHERE RETURN_ORDER.APPROVAL_STATUS <> 'Waiting for approval' AND EMPLOYEE.EMAIL_ID =:email_id;"""
+    LEFT OUTER JOIN EMPLOYEE E1
+    ON(PURCHASE_ORDER.DELIVERY_EMPLOYEE_ID = E1.EMPLOYEE_ID)
+		LEFT OUTER JOIN EMPLOYEE E2
+		ON(RETURN_ORDER.CUSTOMER_CARE_EMPLOYEE_ID=E2.EMPLOYEE_ID)
+    WHERE RETURN_ORDER.APPROVAL_STATUS <> 'Waiting for approval' AND E2.EMAIL_ID =:email_id;"""
     cursor.execute(sql, {'email_id':cus_care_email})
     result = cursor.fetchall()
     orders_view = []
@@ -693,6 +729,7 @@ def returnCusCarePastReview(request):
         }
         orders_view.append(x)
     cursor.close()
+    print(orders_view)
     order_info = {
         'isLoggedIn':isLoggedIn,
         'orders_view':orders_view,
