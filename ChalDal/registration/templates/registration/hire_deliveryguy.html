@@ -20,6 +20,28 @@
     >
       <div class="container py-5 h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-md-3 mb-3">
+            <div class="sidebar d-grid gap-2 col-6" style="padding-top: 50px">
+              <a
+                class="btn btn-success"
+                href="{% url 'registration:admin_home' %}"
+                >Home</a
+              >
+              <a
+                class="btn btn-success"
+                href="{% url 'registration:hire_cus_care' %}"
+                >Hire Customer Care Employee</a
+              >
+              <a
+                class="btn btn-success"
+                href="{% url 'registration:hire_deliveryguy' %}"
+                >Hire delivery Guy</a
+              >
+              <a class="btn btn-danger" href="{% url 'registration:logout' %}"
+                >Log Out</a
+              >
+            </div>
+          </div>
           <div class="col-lg-8 col-xl-8">
             <div class="card rounded-3">
               <img
@@ -41,7 +63,9 @@
                   class="mb-4 pb-2 pb-md-0 mb-md-5"
                   style="text-align: center"
                 >
-                  Hire Delivery Guy
+                  {% if warning %}
+                  <p style="color: crimson">WARNING : {{warning}}</p>
+                  {% endif %} Hire Delivery Guy
                 </h3>
                 <form method="POST">
                   {% csrf_token %}
@@ -123,6 +147,24 @@
                       placeholder="Address"
                     />
                     <label for="address">Address</label>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12 mb-4 pb-2">
+                      <div class="form-outline">
+                        <input
+                          type="number"
+                          id="salaryofEmp"
+                          name="salary"
+                          class="form-control form-control-lg"
+                          placeholder="Salary"
+                        />
+                        <label
+                          class="form-label visually-hidden"
+                          for="salaryofEmp"
+                          >Salary</label
+                        >
+                      </div>
+                    </div>
                   </div>
                   <div class="row">
                     <div class="col-md-12 mb-4 pb-2">

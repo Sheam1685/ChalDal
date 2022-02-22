@@ -11,50 +11,30 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
-    <title>Customer Care</title>
+    <title>Customer Care Review</title>
   </head>
   <body>
     <div>
-      <div class="p-3 mb-2 bg-info text-white" style="text-align: center">
-        Welcome to CHALDAL, {{name}}
-      </div>
+      <div class="p-3 mb-2 bg-info text-white" style="text-align: center">Welcome to CHALDAL, {{name}}</div>
       <div class="container">
         <div class="main-body">
           <div class="row gutters-sm">
             <div class="col-md-3 mb-3">
               <div class="sidebar d-grid gap-2 col-6" style="padding-top: 50px">
-                <a
-                  class="btn btn-info"
-                  href="{% url 'registration:cus_care_home' %}"
-                  >Home</a
-                >
-                <a
-                  class="btn btn-info"
-                  href="{% url 'registration:cus_care_reviews' %}"
-                  >Pending Reviews</a
-                >
-                <a
-                  class="btn btn-info"
-                  href="{% url 'registration:cus_care_past_review' %}"
-                  >Past Reviews</a
-                >
-                <a class="btn btn-danger" href="{% url 'registration:logout' %}"
-                  >Log Out</a
-                >
+                <a class="btn btn-info" href="{% url 'registration:cus_care_home' %}">Home</a>
+                <a class="btn btn-info" href="{% url 'registration:cus_care_reviews' %}">Pending Reviews</a>
+                <a class="btn btn-info" href="{% url 'registration:cus_care_past_review' %}">Past Reviews</a>
+                <a class="btn btn-danger" href="{% url 'registration:logout' %}">Log Out</a>
               </div>
             </div>
             <div class="col-md-9 mb-3" style="padding-top: 40px">
               <table class="table">
                 <thead>
                   <tr>
-                    <th scope="col" style="text-align: center">
-                      Customer Name
-                    </th>
+                    <th scope="col" style="text-align: center">Customer Name</th>
                     <th scope="col" style="text-align: center">Products</th>
                     <th scope="col" style="text-align: center">Order Date</th>
-                    <th scope="col" style="text-align: center">
-                      Delivery Date
-                    </th>
+                    <th scope="col" style="text-align: center">Delivery Date</th>
                     <th scope="col" style="text-align: center">Return Date</th>
                     <th scope="col" style="text-align: center">Delivery Guy</th>
                     <th scope="col" style="text-align: center">Complaint</th>
@@ -71,7 +51,13 @@
                     <td style="text-align: center">{{order.return_date}}</td>
                     <td style="text-align: center">{{order.delivery_guy}}</td>
                     <td style="text-align: center">{{order.complaint}}</td>
-                    <td style="text-align: center">{{order.action}}</td>
+                    <td style="text-align: center">
+                      <div class="d-grid d-md-flex justify-content-md-end">
+                        <a class="btn btn-outline-success me-md-2" role="button" href="#"> Accept </a>
+
+                        <a class="btn btn-outline-danger" role="button" href="">Deny</a>
+                      </div>
+                    </td>
                   </tr>
                   {% endfor %}
                 </tbody>

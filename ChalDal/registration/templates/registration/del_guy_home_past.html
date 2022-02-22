@@ -15,46 +15,53 @@
   </head>
   <body>
     <div>
-      <div class="p-3 mb-2 bg-info text-white" style="text-align: center">Welcome Home</div>
+      <div class="p-3 mb-2 bg-info text-white" style="text-align: center">
+        Welcome Home, {{name}}
+      </div>
       <div class="container">
         <div class="main-body">
           <div class="row gutters-sm">
             <div class="col-md-3 mb-3">
               <div class="sidebar d-grid gap-2 col-6" style="padding-top: 50px">
-                <a class="btn btn-info" href="{% url 'registration:delivery_guy_home' %}">Home</a>
-                <a class="btn btn-info" href="{% url 'registration:delivery_pending' %}">Pending Deliveries</a>
-                <a class="btn btn-info" href="{% url 'registration:delivery_home_past' %}">Past deliveries</a>
-                <a class="btn btn-danger" href="{% url 'registration:logout' %}">Log Out </a>
+                <a
+                  class="btn btn-info"
+                  href="{% url 'registration:delivery_guy_home' %}"
+                  >Home</a
+                >
+                <a
+                  class="btn btn-info"
+                  href="{% url 'registration:delivery_pending' %}"
+                  >Pending Deliveries</a
+                >
+                <a
+                  class="btn btn-info"
+                  href="{% url 'registration:delivery_home_past' %}"
+                  >Past deliveries</a
+                >
+                <a class="btn btn-danger" href="{% url 'registration:logout' %}"
+                  >Log Out</a
+                >
               </div>
             </div>
             <div class="col-md-9 mb-3" style="padding-top: 40px">
               <table class="table">
                 <thead>
                   <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
+                    <th scope="col" style="text-align: center">
+                      Customer Name
+                    </th>
+                    <th scope="col" style="text-align: center">Order Date</th>
+                    <th scope="col" style="text-align: center">Address</th>
                   </tr>
                 </thead>
                 <tbody>
+                  {% for order in order_view %}
                   <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
+                    <td style="text-align: center">{{order.cus_name}}</td>
+                    <td style="text-align: center">{{order.date}}</td>
+                    <td style="text-align: center">{{order.address}}</td>
                   </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td colspan="2">Larry the Bird</td>
-                    <td>@twitter</td>
-                  </tr>
+                  {% endfor %}
                 </tbody>
               </table>
             </div>

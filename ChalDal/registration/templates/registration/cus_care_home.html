@@ -11,29 +11,31 @@
       integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
-    <title>Home of ADMIN</title>
+    <title>Customer Care Home</title>
   </head>
   <body>
     <div class="p-3 mb-2 bg-info text-white" style="text-align: center">
-      Welcome Home, {{name}}
+      Welcome to CHALDAL, {{name}}
     </div>
     <div class="container">
       <div class="main-body">
         <div class="row gutters-sm">
           <div class="col-md-3 mb-3">
             <div class="sidebar d-grid gap-2 col-6" style="padding-top: 50px">
-              <a class="btn btn-info" href="{% url 'registration:admin_home' %}"
+              <a
+                class="btn btn-info"
+                href="{% url 'registration:cus_care_home' %}"
                 >Home</a
               >
               <a
                 class="btn btn-info"
-                href="{% url 'registration:hire_cus_care' %}"
-                >Hire Customer Care Employee</a
+                href="{% url 'registration:cus_care_reviews' %}"
+                >Pending Reviews</a
               >
               <a
                 class="btn btn-info"
-                href="{% url 'registration:hire_deliveryguy' %}"
-                >Hire delivery Guy</a
+                href="{% url 'registration:cus_care_past_review' %}"
+                >Past Reviews</a
               >
               <a class="btn btn-danger" href="{% url 'registration:logout' %}"
                 >Log Out</a

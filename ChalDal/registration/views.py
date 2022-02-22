@@ -206,6 +206,12 @@ def returnLogout(request):
     if request.session.has_key('del_guy_email'):
         request.session.pop('del_guy_email')
         return redirect('home')
+    if request.session.has_key('admin_email'):
+        request.session.pop('admin_email')
+        return redirect('home')
+    if request.session.has_key('cus_care_email'):
+        request.session.pop('cus_care_email')
+        return redirect('home')
     
 
 def returnCustomerHome(request):
@@ -481,26 +487,6 @@ def returnEmployeeLogin(request):
             print("Oh boy")
     return render(request, 'registration/employee_login.html' )
 
-def returnAdminHome(request):
-    admin_email= request.session['admin_email']
-    isLoggedIn = True
-    return render(request, 'registration/admin_home.html' )
-
-def returnCusCareHome(request):
-    cus_care_email = request.session['cus_care_email']
-    isLoggedIn = True
-    return render(request, 'registration/cus_care_emp.html' )
-
-def returnCusCarePastReview(request):
-    cus_care_email = request.session['cus_care_email']
-    isLoggedIn = True
-    return render(request, 'registration/cus_care_emp_past.html')
-
-def returnDeliveryHome(request):
-    del_guy_email = request.session['del_guy_email']
-    isLoggedIn = True
-    return render(request, 'registration/del_guy_home.html')
-
 def returnDeliveryPending(request):
     del_guy_email = request.session['del_guy_email']
     cursor = connection.cursor()
@@ -544,17 +530,313 @@ def returnDeliveryPending(request):
     }
     return render(request, 'registration/del_guy_pending.html', view_order)
 
+def returnAdminHome(request):
+    admin_email= request.session['admin_email']
+    isLoggedIn = True
+    cursor = connection.cursor()
+    sql = """SELECT (FIRST_NAME || ' ' || LAST_NAME), EMAIL_ID, SALARY, PHONE_NUMBER, ADDRESS 
+    FROM EMPLOYEE 
+    WHERE EMAIL_ID =:email_id;"""
+    cursor.execute(sql,{'email_id':admin_email})
+    result = cursor.fetchall()
+    cursor.close()
+
+    name = result[0][0]
+    email_id = result[0][1]
+    salary = result[0][2]
+    phone_no = result[0][3]
+    address = result[0][4]
+
+    basic_info = {
+        'isLoggedIn':isLoggedIn,
+        'name':name, 
+        'address':address,
+        'phone_no':phone_no,
+        'email_id':email_id,
+        'salary':salary
+    }
+    return render(request, 'registration/admin_home.html', basic_info )
+
+def returnCusCareHome(request):
+    cus_care_email = request.session['cus_care_email']
+    isLoggedIn = True
+    cursor = connection.cursor()
+    sql = """SELECT (FIRST_NAME || ' ' || LAST_NAME), EMAIL_ID, SALARY, PHONE_NUMBER, ADDRESS 
+    FROM EMPLOYEE 
+    WHERE EMAIL_ID =:email_id;"""
+    cursor.execute(sql,{'email_id':cus_care_email})
+    result = cursor.fetchall()
+    cursor.close()
+    name = result[0][0]
+    email_id = result[0][1]
+    salary = result[0][2]
+    phone_no = result[0][3]
+    address = result[0][4]
+
+    basic_info = {
+        'isLoggedIn':isLoggedIn,
+        'name':name, 
+        'address':address,
+        'phone_no':phone_no,
+        'email_id':email_id,
+        'salary':salary
+    }
+    return render(request, 'registration/cus_care_home.html', basic_info )
+
+def returnCusCarePendingReviews(request):
+    cus_care_email = request.session['cus_care_email']
+    isLoggedIn = True
+    cursor = connection.cursor()
+    sql = """SELECT FIRST_NAME || ' ' ||LAST_NAME
+    FROM CUSTOMER_CARE_EMPLOYEE LEFT OUTER JOIN EMPLOYEE
+    ON(CUSTOMER_CARE_EMPLOYEE.EMPLOYEE_ID = EMPLOYEE.EMPLOYEE_ID)
+    WHERE EMPLOYEE.EMAIL_ID =:email_id;"""
+    cursor.execute(sql, {'email_id':cus_care_email})
+    result2 = cursor.fetchone()
+    sql = """SELECT CUSTOMER.FIRST_NAME || ' ' || CUSTOMER.LAST_NAME, 
+    CUSTOMER_ORDER.ORDER_DATE, RETURN_ORDER.RETURN_DATE, RETURN_ORDER.COMPLAINT_DES, 
+    RETURN_ORDER.ORDER_ID, PURCHASE_ORDER.DELIVERED_DATE, EMPLOYEE.FIRST_NAME ||' '|| EMPLOYEE.LAST_NAME
+    FROM RETURN_ORDER LEFT OUTER JOIN CUSTOMER_ORDER
+    ON(RETURN_ORDER.ORDER_ID = CUSTOMER_ORDER.ORDER_ID)
+    LEFT OUTER JOIN PURCHASE_ORDER
+    ON(RETURN_ORDER.ORDER_ID = PURCHASE_ORDER.ORDER_ID)
+    LEFT OUTER JOIN CUSTOMER
+    ON(CUSTOMER_ORDER.CUSTOMER_ID = CUSTOMER.CUSTOMER_ID)
+    LEFT OUTER JOIN EMPLOYEE
+    ON(PURCHASE_ORDER.DELIVERY_EMPLOYEE_ID = EMPLOYEE.EMPLOYEE_ID)
+    WHERE RETURN_ORDER.APPROVAL_STATUS = 'Waiting for approval';"""
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    orders_view = []
+    for row in result:
+        id = row[4]
+        sql = """SELECT PRODUCT.PRODUCT_ID, PRODUCT.NAME, COUNT(ORDERED_ITEMS.ITEM_NUMBER) ITEM_COUNT
+        FROM ORDERED_ITEMS LEFT OUTER JOIN PRODUCT
+        ON(ORDERED_ITEMS.PRODUCT_ID = PRODUCT.PRODUCT_ID)
+        WHERE ORDER_ID =:id
+        GROUP BY PRODUCT.PRODUCT_ID, PRODUCT.NAME;"""
+        cursor.execute(sql,{'id':id})
+        result1 = cursor.fetchall()
+        items = ""
+        for row1 in result1:
+            items = items + "," + row1[1] + "(" + str(row1[2]) + " pcs)"
+        items = items[1:]
+        x = {
+            'cus_name':row[0],
+            'order_date':row[1],
+            'return_date':row[2],
+            'complaint':row[3],
+            'delivery_date':row[5],
+            'delivery_guy':row[6],
+            'items':items
+        }
+        orders_view.append(x)
+    cursor.close()
+    order_info = {
+        'isLoggedIn':isLoggedIn,
+        'orders_view':orders_view,
+        'name':result2[0],
+    }
+
+
+    return render(request, 'registration/cus_care_review.html', order_info )
+
+def returnCusCarePastReview(request):
+    cus_care_email = request.session['cus_care_email']
+    isLoggedIn = True
+    cursor = connection.cursor()
+    sql = """SELECT FIRST_NAME || ' ' ||LAST_NAME
+    FROM CUSTOMER_CARE_EMPLOYEE LEFT OUTER JOIN EMPLOYEE
+    ON(CUSTOMER_CARE_EMPLOYEE.EMPLOYEE_ID = EMPLOYEE.EMPLOYEE_ID)
+    WHERE EMPLOYEE.EMAIL_ID =:email_id;"""
+    cursor.execute(sql, {'email_id':cus_care_email})
+    result2 = cursor.fetchone()
+    sql = """SELECT CUSTOMER.FIRST_NAME || ' ' || CUSTOMER.LAST_NAME, CUSTOMER_ORDER.ORDER_DATE, 
+    RETURN_ORDER.RETURN_DATE, RETURN_ORDER.COMPLAINT_DES, RETURN_ORDER.ORDER_ID, 
+    PURCHASE_ORDER.DELIVERED_DATE, PURCHASE_ORDER.DELIVERY_EMPLOYEE_ID, 
+    EMPLOYEE.FIRST_NAME ||' '|| EMPLOYEE.LAST_NAME, RETURN_ORDER.APPROVAL_STATUS
+    FROM RETURN_ORDER LEFT OUTER JOIN CUSTOMER_ORDER
+    ON(RETURN_ORDER.ORDER_ID = CUSTOMER_ORDER.ORDER_ID)
+    LEFT OUTER JOIN PURCHASE_ORDER
+    ON(RETURN_ORDER.ORDER_ID = PURCHASE_ORDER.ORDER_ID)
+    LEFT OUTER JOIN CUSTOMER
+    ON(CUSTOMER_ORDER.CUSTOMER_ID = CUSTOMER.CUSTOMER_ID)
+    LEFT OUTER JOIN EMPLOYEE
+    ON(PURCHASE_ORDER.DELIVERY_EMPLOYEE_ID = EMPLOYEE.EMPLOYEE_ID)
+    WHERE RETURN_ORDER.APPROVAL_STATUS <> 'Waiting for approval' AND EMPLOYEE.EMAIL_ID =:email_id;"""
+    cursor.execute(sql, {'email_id':cus_care_email})
+    result = cursor.fetchall()
+    orders_view = []
+    for row in result:
+        id = row[4]
+        sql = """SELECT PRODUCT.PRODUCT_ID, PRODUCT.NAME, COUNT(ORDERED_ITEMS.ITEM_NUMBER) ITEM_COUNT
+        FROM ORDERED_ITEMS LEFT OUTER JOIN PRODUCT
+        ON(ORDERED_ITEMS.PRODUCT_ID = PRODUCT.PRODUCT_ID)
+        WHERE ORDER_ID =:id
+        GROUP BY PRODUCT.PRODUCT_ID, PRODUCT.NAME;"""
+        cursor.execute(sql,{'id':id})
+        result1 = cursor.fetchall()
+        items = ""
+        for row1 in result1:
+            items = items + "," + row1[1] + "(" + str(row1[2]) + " pcs)"
+        items = items[1:]
+        x = {
+            'cus_name':row[0],
+            'order_date':row[1],
+            'return_date':row[2],
+            'complaint':row[3],
+            'delivery_date':row[5],
+            'delivery_guy':row[6],
+            'action':row[7],
+            'items':items
+        }
+        orders_view.append(x)
+    cursor.close()
+    order_info = {
+        'isLoggedIn':isLoggedIn,
+        'orders_view':orders_view,
+        'name':result2[0],
+    }
+    return render(request, 'registration/cus_care_emp_past.html', order_info)
+
+def returnDeliveryHome(request):
+    del_guy_email = request.session['del_guy_email']
+    isLoggedIn = True
+    cursor = connection.cursor()
+    sql = """SELECT (FIRST_NAME || ' ' || LAST_NAME), EMAIL_ID, SALARY, PHONE_NUMBER, ADDRESS 
+    FROM EMPLOYEE 
+    WHERE EMAIL_ID =:email_id;"""
+    cursor.execute(sql,{'email_id':del_guy_email})
+    result = cursor.fetchall()
+    cursor.close()
+
+    name = result[0][0]
+    email_id = result[0][1]
+    salary = result[0][2]
+    phone_no = result[0][3]
+    address = result[0][4]
+
+    basic_info = {
+        'isLoggedIn':isLoggedIn,
+        'name':name, 
+        'address':address,
+        'phone_no':phone_no,
+        'email_id':email_id,
+        'salary':salary
+    }
+    return render(request, 'registration/del_guy_home.html', basic_info)
+
 def returnDeliveryHomePast(request):
     del_guy_email = request.session['del_guy_email']
     isLoggedIn = True
-    return render(request, 'registration/del_guy_home_past.html')
+    cursor = connection.cursor()
+    sql = """SELECT (CUSTOMER.FIRST_NAME || ' ' || CUSTOMER.LAST_NAME),
+    PURCHASE_ORDER.DELIVERED_DATE,  
+    CUSTOMER_ORDER.PICKUP_ADRS
+    FROM PURCHASE_ORDER LEFT OUTER JOIN CUSTOMER_ORDER
+    ON(PURCHASE_ORDER.ORDER_ID = CUSTOMER_ORDER.ORDER_ID)
+    LEFT OUTER JOIN  CUSTOMER
+    ON(CUSTOMER_ORDER.CUSTOMER_ID = CUSTOMER.CUSTOMER_ID)
+    WHERE PURCHASE_ORDER.DELIVERY_EMPLOYEE_ID = 
+    (SELECT EMPLOYEE_ID FROM EMPLOYEE WHERE EMAIL_ID =:email_id)"""
+    cursor.execute(sql, {'email_id':del_guy_email})
+    result = cursor.fetchall()
+    sql = """SELECT FIRST_NAME || ' ' ||LAST_NAME
+    FROM DELIVERY_GUY LEFT OUTER JOIN EMPLOYEE
+    ON(DELIVERY_GUY.EMPLOYEE_ID = EMPLOYEE.EMPLOYEE_ID)
+    WHERE EMPLOYEE.EMAIL_ID =:email_id;"""
+    cursor.execute(sql, {'email_id':del_guy_email})
+    result1 = cursor.fetchone()
+    cursor.close()
+    order_view = []
+    for row in result:
+        x = {
+            'cus_name':row[0],
+            'date':row[1],
+            'address':row[2]
+        }
+        order_view.append(x)
+    view_order = {
+        'isLoggedIn':isLoggedIn,
+        'order_view':order_view,
+        'name':result1[0]
+    }
+    return render(request, 'registration/del_guy_home_past.html', view_order)
 
 def returnHireCusCare(request):
     admin_email= request.session['admin_email']
     isLoggedIn = True
+    if request.method == 'POST':
+        fname = request.POST.get('fname')
+        lname = request.POST.get('lname')
+        dob = request.POST.get('dob')
+        phn = request.POST.get('phn')
+        address = request.POST.get('address')
+        email = request.POST.get('email')
+        password = request.POST.get('pass')
+        salary = request.POST.get('salary')
+        if fname == '' or lname == '' or dob == '' or phn == '' or address == '' or email == '' or password == '' or salary == '':
+            return render(request, 'registration/hire_cuscare_employee.html' , context={'warning':"None of the fields can be Empty"})
+        cursor = connection.cursor()
+        sql = """SELECT COUNT(*) FROM EMPLOYEE WHERE EMAIL_ID =:email_id;"""
+        cursor.execute(sql, {'email_id':email})
+        result = cursor.fetchone()
+        if result[0] > 0:
+            return render(request, 'registration/hire_cuscare_employee.html' , context={'warning':"This email already has an associated Employee"})
+        
+        sql = """SELECT MAX(EMPLOYEE_ID) FROM EMPLOYEE;"""
+        cursor.execute(sql)
+        last_id = cursor.fetchone()
+        last_id = last_id[0]
+        if last_id is not None:
+            emp_id = last_id+1
+        else:
+            emp_id = 1
+        sql = """INSERT INTO EMPLOYEE VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+        cursor.execute(sql,[emp_id, fname, lname, salary, phn, address, email, dob, password])
+        sql = """INSERT INTO CUSTOMER_CARE_EMPLOYEE VALUES(%s)"""
+        cursor.execute(sql,[emp_id])
+        connection.commit()
+        cursor.close()
+        return redirect('registration:admin_home')
     return render(request, 'registration/hire_cuscare_employee.html' )
 
 def returnHireDeliveryGuy(request):
     admin_email= request.session['admin_email']
     isLoggedIn = True
+    if request.method == 'POST':
+        fname = request.POST.get('fname')
+        lname = request.POST.get('lname')
+        dob = request.POST.get('dob')
+        phn = request.POST.get('phn')
+        address = request.POST.get('address')
+        email = request.POST.get('email')
+        password = request.POST.get('pass')
+        salary = request.POST.get('salary')
+        if fname == '' or lname == '' or dob == '' or phn == '' or address == '' or email == '' or password == '' or salary == '':
+            print("hello world")
+            return render(request, 'registration/hire_deliveryguy.html' , context={'warning':"None of the fields can be Empty"})
+
+        cursor = connection.cursor()
+        sql = """SELECT COUNT(*) FROM EMPLOYEE WHERE EMAIL_ID =:email_id;"""
+        cursor.execute(sql, {'email_id':email})
+        result = cursor.fetchone()
+        if result[0] > 0:
+            print("hello")
+            return render(request, 'registration/hire_deliveryguy.html' , context={'warning':"This email already has an associated Employee"})
+        sql = """SELECT MAX(EMPLOYEE_ID) FROM EMPLOYEE;"""
+        cursor.execute(sql)
+        last_id = cursor.fetchone()
+        last_id = last_id[0]
+        if last_id is not None:
+            emp_id = last_id+1
+        else:
+            emp_id = 1
+        sql = """INSERT INTO EMPLOYEE VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+        cursor.execute(sql,[emp_id, fname, lname, salary, phn, address, email, dob, password])
+        sql = """INSERT INTO DELIVERY_GUY VALUES(%s,%s)"""
+        cursor.execute(sql,[emp_id, "Bonani, Dhaka"])
+        connection.commit()
+        cursor.close()
+        return redirect('registration:admin_home')
     return render(request, 'registration/hire_deliveryguy.html' )

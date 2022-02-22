@@ -14,33 +14,49 @@
     <title>Delivery Guy Home</title>
   </head>
   <body>
-    <div class="p-3 mb-2 bg-info text-white" style="text-align: center">Welcome Home</div>
+    <div class="p-3 mb-2 bg-info text-white" style="text-align: center">
+      Welcome Home, {{name}}
+    </div>
     <div class="container">
       <div class="main-body">
         <div class="row gutters-sm">
           <div class="col-md-3 mb-3">
             <div class="sidebar d-grid gap-2 col-6" style="padding-top: 50px">
-              <a class="btn btn-info" href="{% url 'registration:delivery_guy_home' %}">Home</a>
-              <a class="btn btn-info" href="{% url 'registration:delivery_pending' %}">Pending Deliveries</a>
-              <a class="btn btn-info" href="{% url 'registration:delivery_home_past' %}">Past deliveries</a>
-              <a class="btn btn-danger" href="{% url 'registration:logout' %}">Log Out </a>
+              <a
+                class="btn btn-info"
+                href="{% url 'registration:delivery_guy_home' %}"
+                >Home</a
+              >
+              <a
+                class="btn btn-info"
+                href="{% url 'registration:delivery_pending' %}"
+                >Pending Deliveries</a
+              >
+              <a
+                class="btn btn-info"
+                href="{% url 'registration:delivery_home_past' %}"
+                >Past deliveries</a
+              >
+              <a class="btn btn-danger" href="{% url 'registration:logout' %}"
+                >Log Out</a
+              >
             </div>
           </div>
-          <div class="col-md-3 mb-3">
+          <div class="col-md-3 mb-3" style="padding-top: 50px">
             <div class="card">
               <div class="card-body">
                 <div class="d-flex flex-column align-items-center text-center">
-                  <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" class="rounded-circle" width="150" />
-                  <div class="mt-3">
-                    <h4>{{name}}</h4>
-
-                    <a href="https://chaldal.com/" class="text-muted font-size-sm">{{website}}</a>
-                  </div>
+                  <img
+                    src="https://bootdey.com/img/Content/avatar/avatar7.png"
+                    alt="Admin"
+                    class="rounded-circle"
+                    width="150"
+                  />
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6" style="padding-top: 50px">
             <div class="card mb-3">
               <div class="card-body">
                 <div class="row">
@@ -59,11 +75,9 @@
                 <hr />
                 <div class="row">
                   <div class="col-sm-3">
-                    <h6 class="mb-0">Website</h6>
+                    <h6 class="mb-0">Salary</h6>
                   </div>
-                  <div class="col-sm-9 text-secondary">
-                    <a href="https://chaldal.com/">{{website}}</a>
-                  </div>
+                  <div class="col-sm-9 text-secondary">{{salary}}</div>
                 </div>
                 <hr />
                 <div class="row">
