@@ -15,7 +15,7 @@
   </head>
   <body>
     <div>
-      <div class="p-3 mb-3 bg-info text-white" style="text-align: center">Welcome Home</div>
+      <div class="p-3 mb-2 bg-info text-white" style="text-align: center">Welcome Home, {{name}}</div>
       <div class="container">
         <div class="main-body">
           <div class="row gutters-sm">
@@ -24,7 +24,7 @@
                 <a class="btn btn-info" href="{% url 'registration:delivery_guy_home' %}">Home</a>
                 <a class="btn btn-info" href="{% url 'registration:delivery_pending' %}">Pending Deliveries</a>
                 <a class="btn btn-info" href="{% url 'registration:delivery_home_past' %}">Past deliveries</a>
-                <a class="btn btn-danger" href="{% url 'registration:logout' %}">Log Out </a>
+                <a class="btn btn-danger" href="{% url 'registration:logout' %}">Log Out</a>
               </div>
             </div>
             <div class="col-md-9 mb-3" style="padding-top: 40px">
@@ -32,6 +32,7 @@
                 <thead>
                   <tr>
                     <th scope="col" style="text-align: center">Customer Name</th>
+                    <th scope="col" style="text-align: center">Products</th>
                     <th scope="col" style="text-align: center">Order Date</th>
                     <th scope="col" style="text-align: center">Address</th>
                     <th scope="col" style="text-align: center">Action</th>
@@ -41,6 +42,7 @@
                   {% for order in order_view %}
                   <tr>
                     <td style="text-align: center">{{order.cus_name}}</td>
+                    <td style="text-align: center">{{order.items}}</td>
                     <td style="text-align: center">{{order.date}}</td>
                     <td style="text-align: center">{{order.address}}</td>
                     <td style="text-align: center">

@@ -525,11 +525,24 @@ def returnDeliveryPending(request):
     result = cursor.fetchall()
     order_view = []
     for row in result:
+        id = row[3]
+        sql = """SELECT PRODUCT.PRODUCT_ID, PRODUCT.NAME, COUNT(ORDERED_ITEMS.ITEM_NUMBER) ITEM_COUNT
+        FROM ORDERED_ITEMS LEFT OUTER JOIN PRODUCT
+        ON(ORDERED_ITEMS.PRODUCT_ID = PRODUCT.PRODUCT_ID)
+        WHERE ORDER_ID =:id
+        GROUP BY PRODUCT.PRODUCT_ID, PRODUCT.NAME;"""
+        cursor.execute(sql,{'id':id})
+        result2 = cursor.fetchall()
+        items = ""
+        for row1 in result2:
+            items = items + "," + row1[1] + "(" + str(row1[2]) + " pcs)"
+        items = items[1:]
         x = {
             'cus_name':row[0],
             'date':row[1],
             'address':row[2],
-            'order_id': row[3]
+            'order_id': row[3],
+            'items':items
         }
         order_view.append(x)
     

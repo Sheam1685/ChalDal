@@ -1,0 +1,43 @@
+{% extends 'base.html'%} {% load static %} {% block titlename %}
+
+<title>Offers</title>
+
+{% endblock %} {% block content %}
+
+<div class="container">
+  <p></p>
+  <br />
+  <h2 class="text-center font-monospace">Available Offers</h2>
+  <div class="gallery">
+    {% for prod in prod_list %}
+    <div class="content">
+        <img class="product_img" src="{% static '/images/eggs.png' %}" />
+        <h3 class="product_h3">{{prod.prod_name}}</h3>
+        <p class="product_p"></p>
+        
+        <button class="btn btn-light" type="button" disabled>
+          <span class="spinner-grow text-danger"  role="status" aria-hidden="true"></span>
+          <span class="badge rounded-pill bg-danger" style="font-size: 25px;">{{prod.discount}}% OFF</span>
+        </button><br>
+        
+        <strike style="font-size: 20px; color: red;">&#2547 {{prod.prod_price}}</strike>  
+        <h6 class="product_h6">&#2547 {{prod.dis_price}}</h6>
+       
+        <ul class="product_ul">
+          <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+          <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+          <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+          <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+          <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+        </ul>
+        {% if acType == 'customer' %}
+        <a style="text-decoration: none; color: white" type="button" class="buy-2 product_button" href="{% url 'products:product_details' prod.prod_id %}">Buy Now</a>
+        {% else %}
+        <a style="text-decoration: none; color: white" type="button" class="buy-2 product_button" href="#">Buy Now</a>
+        {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

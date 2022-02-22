@@ -4,6 +4,25 @@ from django.db import connection
 
 # Create your views here.
 
+def categoryList():
+    cursor = connection.cursor()
+    sql = "SELECT CATEGORY_ID, CATEGORY_NAME FROM CATEGORY"
+    
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    cursor.close()
+
+    catList = []
+
+    for r in result:
+        cat_id = r[0]
+        cat_name = r[1]
+
+        row = {'cat_id':cat_id, 'cat_name':cat_name}
+        catList.append(row)
+
+    return catList
+
 def returnHomepage(request):
     isLoggedIn=False
     acType=""
@@ -101,5 +120,42 @@ def searchProduct(request, searchT):
     
     context={'isLoggedIn':isLoggedIn, 'acType':acType, 'catList':catList, 'prod_list':prod_list, 'searchContext':searchContext}
     return render(request, 'homeApp/productSearch.html', context)
+
+
+def returnOffers(request):
+    isLoggedIn=False
+    acType=""
+    if request.session.has_key('cus_email'):
+        isLoggedIn=True
+        acType="customer"
+    if request.session.has_key('seller_email'):
+        isLoggedIn=True
+        acType="seller"
+    cursor = connection.cursor()
+    sql = """SELECT PRODUCT.NAME, PRODUCT.DESCRIPTION, PRODUCT.PRICE, PRODUCT.PRODUCT_ID, OFFER.PERCENTAGE_DISCOUNT
+    FROM OFFER LEFT OUTER JOIN PRODUCT
+    ON(OFFER.PRODUCT_ID = PRODUCT.PRODUCT_ID)
+    WHERE OFFER.END_DATE > SYSDATE;"""
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    prod_list = []
+    cursor.close()
+    catList = categoryList()
+
+    for r in result:
+        x ={
+            'prod_name':r[0],
+            'prod_des':r[1],
+            'prod_price':r[2],
+            'prod_id':r[3],
+            'discount':r[4],
+            'dis_price':r[2]-r[2]*r[4]/100
+        }
+        prod_list.append(x)
+    context = {
+        'isLoggedIn':isLoggedIn, 'acType':acType,
+        'prod_list':prod_list, 'catList':catList
+    }
+    return render(request, 'homeApp/offers.html', context)
 
     
