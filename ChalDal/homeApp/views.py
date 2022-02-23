@@ -55,7 +55,54 @@ def returnHomepage(request):
         
         return redirect('homeApp:productSearch', searchT=searchTerm)
 
-    context={'isLoggedIn':isLoggedIn, 'acType':acType, 'catList':catList, 'searchbar':"yes"}
+    cursor = connection.cursor()
+    sql = """SELECT NAME, PRICE, PRODUCT_ID, AVG_RATING(PRODUCT_ID)
+            FROM PRODUCT
+            ORDER BY AVG_RATING(PRODUCT_ID) DESC"""
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    i=0
+    prod_list = []
+    for r in result:
+        i = i+1
+        if i==9:
+            break
+        prod_name = r[0]
+        prod_price = r[1]
+        prod_id = r[2]
+        avg_rating = r[3]
+        row = {'prod_name':prod_name, 'avg_rating':avg_rating, 'prod_price': prod_price, 'prod_id':prod_id}
+        prod_list.append(row)
+
+
+    cursor = connection.cursor()
+    sql = """SELECT PRODUCT.NAME, PRODUCT.DESCRIPTION, PRODUCT.PRICE, PRODUCT.PRODUCT_ID, OFFER.PERCENTAGE_DISCOUNT
+    FROM OFFER LEFT OUTER JOIN PRODUCT
+    ON(OFFER.PRODUCT_ID = PRODUCT.PRODUCT_ID)
+    WHERE OFFER.END_DATE > SYSDATE
+    ORDER BY OFFER.PERCENTAGE_DISCOUNT DESC;"""
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    offer_prod_list = []
+    cursor.close()
+    catList = categoryList()
+    i = 0
+    for r in result:
+        i= i+1
+        if i==5:
+            break
+        x ={
+            'prod_name':r[0],
+            'prod_des':r[1],
+            'prod_price':r[2],
+            'prod_id':r[3],
+            'discount':r[4],
+            'dis_price':r[2]-r[2]*r[4]/100
+        }
+        offer_prod_list.append(x)
+
+    context={'isLoggedIn':isLoggedIn, 'acType':acType, 'catList':catList,
+             'searchbar':"yes", 'prod_list':prod_list, 'offer_prod_list':offer_prod_list}
 
     return render(request, 'homeApp/home_page.html', context)
 

@@ -60,15 +60,13 @@
 </div>
 
 <div class="container">
-<h2 class="text-center font-monospace">OUR POPULAR PRODUCTS</h2>
+<h2 class="text-center font-monospace">OUR TOP PRODUCTS</h2>
 <div class="gallery">
+  {% for prod in prod_list %}
   <div class="content">
     <img class="product_img" src="{% static '/images/eggs.png' %}" />
-    <h3 class="product_h3">Eggs</h3>
-    <p class="product_p">
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-    </p>
-    <h6 class="product_h6">&#2547 100.00</h6>
+    <h3 class="product_h3">{{prod.prod_name}}</h3>
+    <h6 class="product_h6">&#2547 {{prod.prod_price}}</h6>
     <ul class="product_ul">
       <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
       <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
@@ -76,218 +74,50 @@
       <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
       <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
     </ul>
-    <button class="buy-2 product_button">Buy Now</button>
+    {% if acType == 'customer' %}
+    <a style="text-decoration: none; color: white" type="button" class="buy-2 product_button" href="{% url 'products:product_details' prod.prod_id %}">Buy Now</a>
+    {% else %}
+    <a style="text-decoration: none; color: white" type="button" class="buy-2 product_button" href="#">Buy Now</a>
+    {% endif %}
   </div>
-  <div class="content">
-    <img class="product_img" src="{% static '/images/eggs.png' %}" />
-    <h3 class="product_h3">Eggs</h3>
-    <p class="product_p">
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-    </p>
-    <h6 class="product_h6">&#2547 100.00</h6>
-    <ul class="product_ul">
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-    </ul>
-    <button class="buy-2 product_button">Buy Now</button>
-  </div>
-  <div class="content">
-    <img class="product_img" src="{% static '/images/eggs.png' %}" />
-    <h3 class="product_h3">Eggs</h3>
-    <p class="product_p">
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-    </p>
-    <h6 class="product_h6">&#2547 100.00</h6>
-    <ul class="product_ul">
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-    </ul>
-    <button class="buy-2 product_button">Buy Now</button>
-  </div>
-  <div class="content">
-    <img class="product_img" src="{% static '/images/eggs.png' %}" />
-    <h3 class="product_h3">Eggs</h3>
-    <p class="product_p">
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-    </p>
-    <h6 class="product_h6">&#2547 100.00</h6>
-    <ul class="product_ul">
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-    </ul>
-    <button class="buy-2 product_button">Buy Now</button>
-  </div>
-  <div class="content">
-    <img class="product_img" src="{% static '/images/eggs.png' %}" />
-    <h3 class="product_h3">Eggs</h3>
-    <p class="product_p">
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-    </p>
-    <h6 class="product_h6">&#2547 100.00</h6>
-    <ul class="product_ul">
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-    </ul>
-    <button class="buy-2 product_button">Buy Now</button>
-  </div>
-  <div class="content">
-    <img class="product_img" src="{% static '/images/eggs.png' %}" />
-    <h3 class="product_h3">Eggs</h3>
-    <p class="product_p">
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-    </p>
-    <h6 class="product_h6">&#2547 100.00</h6>
-    <ul class="product_ul">
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-    </ul>
-    <button class="buy-2 product_button">Buy Now</button>
-  </div>
-  <div class="content">
-    <img class="product_img" src="{% static '/images/eggs.png' %}" />
-    <h3 class="product_h3">Eggs</h3>
-    <p class="product_p">
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-    </p>
-    <h6 class="product_h6">&#2547 100.00</h6>
-    <ul class="product_ul">
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-    </ul>
-    <button class="buy-2 product_button">Buy Now</button>
-  </div>
-  <div class="content">
-    <img class="product_img" src="{% static '/images/eggs.png' %}" />
-    <h3 class="product_h3">Eggs</h3>
-    <p class="product_p">
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-    </p>
-    <h6 class="product_h6">&#2547 100.00</h6>
-    <ul class="product_ul">
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-    </ul>
-    <button class="buy-2 product_button">Buy Now</button>
-  </div>
+  {% endfor %}
 </div>
 </div>
 
-  
 <div class="container">
-  <h2 class="text-center font-monospace">SPECIAL OFFERS</h2>
+  <p></p>
+  <br />
+  <h2 class="text-center font-monospace">Special Offers</h2>
   <div class="gallery">
+    {% for prod in offer_prod_list %}
     <div class="content">
-      <img class="product_img" src="{% static '/images/eggs.png' %}" />
-      <h3 class="product_h3">Eggs</h3>
-      <p class="product_p">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-      </p>
-      
-      <button class="btn btn-light" type="button" disabled>
-        <span class="spinner-grow text-danger"  role="status" aria-hidden="true"></span>
-        <span class="badge rounded-pill bg-danger" style="font-size: 25px;">10% OFF</span>
-      </button><br>
-      
-      <strike style="font-size: 20px; color: red;">&#2547 100</strike>  
-      <h6 class="product_h6">&#2547 90.00</h6>
-     
-      <ul class="product_ul">
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      </ul>
-      <button class="buy-2 product_button">Buy Now</button>
+        <img class="product_img" src="{% static '/images/eggs.png' %}" />
+        <h3 class="product_h3">{{prod.prod_name}}</h3>
+        <p class="product_p"></p>
+        
+        <button class="btn btn-light" type="button" disabled>
+          <span class="spinner-grow text-danger"  role="status" aria-hidden="true"></span>
+          <span class="badge rounded-pill bg-danger" style="font-size: 25px;">{{prod.discount}}% OFF</span>
+        </button><br>
+        
+        <strike style="font-size: 20px; color: red;">&#2547 {{prod.prod_price}}</strike>  
+        <h6 class="product_h6">&#2547 {{prod.dis_price}}</h6>
+       
+        <ul class="product_ul">
+          <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+          <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+          <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+          <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+          <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+        </ul>
+        {% if acType == 'customer' %}
+        <a style="text-decoration: none; color: white" type="button" class="buy-2 product_button" href="{% url 'products:product_details' prod.prod_id %}">Buy Now</a>
+        {% else %}
+        <a style="text-decoration: none; color: white" type="button" class="buy-2 product_button" href="#">Buy Now</a>
+        {% endif %}
     </div>
-    <div class="content">
-      <img class="product_img" src="{% static '/images/eggs.png' %}" />
-      <h3 class="product_h3">Eggs</h3>
-      <p class="product_p">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-      </p>
-      
-      <button class="btn btn-light" type="button" disabled>
-        <span class="spinner-grow text-danger"  role="status" aria-hidden="true"></span>
-        <span class="badge rounded-pill bg-danger" style="font-size: 25px;">10% OFF</span>
-      </button><br>
-      <strike style="font-size: 20px; color: red;">&#2547 100</strike>
-      <h6 class="product_h6">&#2547 90.00</h6>
-      <ul class="product_ul">
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      </ul>
-      <button class="buy-2 product_button">Buy Now</button>
-    </div>
-    <div class="content">
-      <img class="product_img" src="{% static '/images/eggs.png' %}" />
-      <h3 class="product_h3">Eggs</h3>
-      <p class="product_p">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-      </p>
-      
-      <button class="btn btn-light" type="button" disabled>
-        <span class="spinner-grow text-danger"  role="status" aria-hidden="true"></span>
-        <span class="badge rounded-pill bg-danger" style="font-size: 25px;">10% OFF</span>
-      </button><br>
-      <strike style="font-size: 20px; color: red;">&#2547 100</strike>
-      <h6 class="product_h6">&#2547 90.00</h6>
-      <ul class="product_ul">
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      </ul>
-      <button class="buy-2 product_button">Buy Now</button>
-    </div>
-    <div class="content">
-      <img class="product_img" src="{% static '/images/eggs.png' %}" />
-      <h3 class="product_h3">Eggs</h3>
-      <p class="product_p">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-      </p>
-      
-      <button class="btn btn-light" type="button" disabled>
-        <span class="spinner-grow text-danger"  role="status" aria-hidden="true"></span>
-        <span class="badge rounded-pill bg-danger" style="font-size: 25px;">10% OFF</span>
-      </button><br>
-      <strike style="font-size: 20px; color: red;">&#2547 100</strike>
-      <h6 class="product_h6">&#2547 90.00</h6>
-      <ul class="product_ul">
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-        <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      </ul>
-      <button class="buy-2 product_button">Buy Now</button>
-    </div>
-    </div>
-    </div>
+    {% endfor %}
+  </div>
+</div>  
+
   {% endblock %}
-</div>
