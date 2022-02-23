@@ -71,7 +71,10 @@ def returnHomepage(request):
         prod_price = r[1]
         prod_id = r[2]
         avg_rating = r[3]
-        row = {'prod_name':prod_name, 'avg_rating':avg_rating, 'prod_price': prod_price, 'prod_id':prod_id}
+        rating_string = []
+        for j in range(int(avg_rating)):
+            rating_string.append('a')
+        row = {'prod_name':prod_name, 'avg_rating':avg_rating, 'prod_price': prod_price, 'prod_id':prod_id, 'rating_string':rating_string}
         prod_list.append(row)
 
 
@@ -97,9 +100,10 @@ def returnHomepage(request):
             'prod_price':r[2],
             'prod_id':r[3],
             'discount':r[4],
-            'dis_price':r[2]-r[2]*r[4]/100
+            'dis_price':r[2]-r[2]*r[4]/100,
         }
         offer_prod_list.append(x)
+        
 
     context={'isLoggedIn':isLoggedIn, 'acType':acType, 'catList':catList,
              'searchbar':"yes", 'prod_list':prod_list, 'offer_prod_list':offer_prod_list}

@@ -68,12 +68,15 @@
     <h3 class="product_h3">{{prod.prod_name}}</h3>
     <h6 class="product_h6">&#2547 {{prod.prod_price}}</h6>
     <ul class="product_ul">
+      {% for i in prod.rating_string %}
       <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
-      <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+      {% endfor %}
+    </ul>
+    {% if prod.avg_rating == 0 %}
+    <ul class="product_ul">
       <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
     </ul>
+    {% endif %}
     {% if acType == 'customer' %}
     <a style="text-decoration: none; color: white" type="button" class="buy-2 product_button" href="{% url 'products:product_details' prod.prod_id %}">Buy Now</a>
     {% else %}
@@ -104,12 +107,15 @@
         <h6 class="product_h6">&#2547 {{prod.dis_price}}</h6>
        
         <ul class="product_ul">
+          
           <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
           <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
           <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
           <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
           <li class="prudct_li"><i class="fa fa-star" aria-hidden="true"></i></li>
+          
         </ul>
+        
         {% if acType == 'customer' %}
         <a style="text-decoration: none; color: white" type="button" class="buy-2 product_button" href="{% url 'products:product_details' prod.prod_id %}">Buy Now</a>
         {% else %}
