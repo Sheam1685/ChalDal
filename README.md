@@ -3,7 +3,9 @@
 2. Activate virtual environment
 3. Install following package:
 	a) python == 3.10.0
+	
 	b) django == 4.0.1
+	
 	c) cx-Oracle
 	
 	Use following command to install these-
