@@ -2,9 +2,9 @@
 1. Create a conda virtual environment
 2. Activate virtual environment
 3. Install following package:
-	i) python == 3.10.0
-	ii) django == 4.0.1
-	iii) cx-Oracle
+	a) python == 3.10.0
+	b) django == 4.0.1
+	c) cx-Oracle
 	
 	Use following command to install these-
 	
