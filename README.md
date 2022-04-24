@@ -1,3 +1,10 @@
+# ChalDal: E-Commerce
+
+* For Frontend we used HTML, CSS, Vanilla JS, Bootstrap framework
+* For Backend we used Python's Django framework, Oracle Database
+
+### Presentation: https://drive.google.com/drive/folders/1kHmDJadQlvP5jzjV9z1WuMhHCY9HV3DD?usp=sharing
+
 ### To run the project ---
 1. Create a conda virtual environment
 2. Activate virtual environment
@@ -21,3 +28,10 @@
 	python manage.py runserver
 	```
 7. The app is running on `127.0.0.1:8000`
+
+### Contributors :
+
+| Name          	| Email                    |
+| ----------------------| ------------------------ |
+| Abu Nowshed Sakib 	| ansakib04@gmail.com 	   |
+| Kamrujjaman Sheam  	| 			   |
