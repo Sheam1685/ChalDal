@@ -3,7 +3,7 @@
 * For Frontend we used HTML, CSS, Vanilla JS, Bootstrap framework
 * For Backend we used Python's Django framework, Oracle Database
 
-### Presentation: https://drive.google.com/drive/folders/1kHmDJadQlvP5jzjV9z1WuMhHCY9HV3DD?usp=sharing
+### [Watch Demo Video on YouTube](https://www.youtube.com/playlist?list=PL6huIUYR78QShwJE4UWiuBsHdskCsoK1W) 
 
 ### To run the project ---
 1. Create a conda virtual environment
