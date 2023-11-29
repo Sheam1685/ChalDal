@@ -34,4 +34,4 @@
 | Name          	| Email                    |
 | ----------------------| ------------------------ |
 | Abu Nowshed Sakib 	| ansakib04@gmail.com 	   |
-| Kamrujjaman Sheam  	| 			   |
+| Kamrujjaman Sheam  	| sheamkamrujjaman@gmail.com		   |
